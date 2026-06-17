@@ -3,12 +3,19 @@ const router = express.Router();
 const multer = require('multer');
 const sharp = require('sharp');
 const path = require('path');
-const fs = require('fs');
+const cloudinary = require('cloudinary').v2;
 const Submission = require('../models/Submission');
 const Photo = require('../models/Photo');
 const { protect } = require('../middleware/authMiddleware');
 
-// Multer setup
+// Cloudinary config
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
+
+// Multer
 const storage = multer.memoryStorage();
 const upload = multer({
   storage,
@@ -20,107 +27,86 @@ const upload = multer({
   }
 });
 
-const uploadDir = path.join(__dirname, '../uploads');
-const thumbDir = path.join(__dirname, '../uploads/thumbnails');
-if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
-if (!fs.existsSync(thumbDir)) fs.mkdirSync(thumbDir, { recursive: true });
+// Helper — upload buffer to Cloudinary
+async function uploadToCloudinary(buffer, folder) {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      { folder },
+      (err, result) => { if (err) reject(err); else resolve(result); }
+    );
+    stream.end(buffer);
+  });
+}
 
 // ── PUBLIC: Submit a photo ──────────────────────────────
-// POST /api/submissions
 router.post('/', upload.single('photo'), async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ success: false, message: 'No file uploaded' });
-
     const { name, email, title, description, tags, location, device } = req.body;
-    if (!name || !email || !title) {
-      return res.status(400).json({ success: false, message: 'Name, email and title are required' });
-    }
-
-    const timestamp = Date.now();
-    const filename = `sub_${timestamp}.jpg`;
-    const thumbFilename = `sub_thumb_${timestamp}.jpg`;
+    if (!name || !email || !title) return res.status(400).json({ success: false, message: 'Name, email and title are required' });
 
     const meta = await sharp(req.file.buffer).metadata();
 
-    await sharp(req.file.buffer)
-      .resize({ width: 2000, withoutEnlargement: true })
-      .jpeg({ quality: 85 })
-      .toFile(path.join(uploadDir, filename));
+    const fullBuffer = await sharp(req.file.buffer).resize({ width: 2000, withoutEnlargement: true }).jpeg({ quality: 85 }).toBuffer();
+    const thumbBuffer = await sharp(req.file.buffer).resize({ width: 600, withoutEnlargement: true }).jpeg({ quality: 75 }).toBuffer();
 
-    await sharp(req.file.buffer)
-      .resize({ width: 600, withoutEnlargement: true })
-      .jpeg({ quality: 75 })
-      .toFile(path.join(thumbDir, thumbFilename));
+    const [fullResult, thumbResult] = await Promise.all([
+      uploadToCloudinary(fullBuffer, 'iclicks/submissions'),
+      uploadToCloudinary(thumbBuffer, 'iclicks/submissions/thumbnails')
+    ]);
 
     const submission = await Submission.create({
-      name,
-      email,
-      title,
-      description,
+      name, email, title, description,
       tags: tags ? tags.split(',').map(t => t.trim()).filter(Boolean) : [],
       location,
       device: device || 'iPhone',
-      filename,
-      url: `/uploads/${filename}`,
-      thumbnailUrl: `/uploads/thumbnails/${thumbFilename}`,
+      filename: fullResult.public_id,
+      url: fullResult.secure_url,
+      thumbnailUrl: thumbResult.secure_url,
+      thumbnailFilename: thumbResult.public_id,
       width: meta.width,
       height: meta.height,
       fileSize: req.file.size
     });
 
-    res.status(201).json({
-      success: true,
-      message: 'Photo submitted successfully! We will review it shortly.',
-      id: submission._id
-    });
+    res.status(201).json({ success: true, message: 'Photo submitted successfully! We will review it shortly.', id: submission._id });
   } catch (e) {
     res.status(500).json({ success: false, message: e.message });
   }
 });
 
 // ── ADMIN: Get all submissions ──────────────────────────
-// GET /api/submissions/admin?status=pending
 router.get('/admin', protect, async (req, res) => {
   try {
     const { status, page = 1, limit = 20 } = req.query;
     const query = status ? { status } : {};
     const skip = (page - 1) * limit;
-
     const [submissions, total] = await Promise.all([
       Submission.find(query).sort({ createdAt: -1 }).skip(skip).limit(parseInt(limit)),
       Submission.countDocuments(query)
     ]);
-
     const counts = await Promise.all([
       Submission.countDocuments({ status: 'pending' }),
       Submission.countDocuments({ status: 'approved' }),
       Submission.countDocuments({ status: 'rejected' })
     ]);
-
-    res.json({
-      success: true,
-      submissions,
-      total,
-      counts: { pending: counts[0], approved: counts[1], rejected: counts[2] }
-    });
+    res.json({ success: true, submissions, total, counts: { pending: counts[0], approved: counts[1], rejected: counts[2] } });
   } catch (e) {
     res.status(500).json({ success: false, message: e.message });
   }
 });
 
-// ── ADMIN: Approve submission → moves to Photo collection ──
-// POST /api/submissions/:id/approve
+// ── ADMIN: Approve → move to Photo collection ──
 router.post('/:id/approve', protect, async (req, res) => {
   try {
     const sub = await Submission.findById(req.params.id);
     if (!sub) return res.status(404).json({ success: false, message: 'Submission not found' });
 
-    // Create a real Photo from submission
     const photo = await Photo.create({
       title: sub.title,
       description: sub.description,
       filename: sub.filename,
-      thumbnailFilename: sub.thumbnailUrl?.split('/').pop(),
+      thumbnailFilename: sub.thumbnailFilename,
       url: sub.url,
       thumbnailUrl: sub.thumbnailUrl,
       tags: sub.tags,
@@ -143,25 +129,20 @@ router.post('/:id/approve', protect, async (req, res) => {
   }
 });
 
-// ── ADMIN: Reject submission ──
-// POST /api/submissions/:id/reject
+// ── ADMIN: Reject ──
 router.post('/:id/reject', protect, async (req, res) => {
   try {
     const sub = await Submission.findById(req.params.id);
     if (!sub) return res.status(404).json({ success: false, message: 'Not found' });
 
+    // Delete from Cloudinary
+    if (sub.filename) await cloudinary.uploader.destroy(sub.filename).catch(() => {});
+    if (sub.thumbnailFilename) await cloudinary.uploader.destroy(sub.thumbnailFilename).catch(() => {});
+
     sub.status = 'rejected';
     sub.adminNote = req.body.note || '';
     sub.reviewedAt = new Date();
     await sub.save();
-
-    // Delete files to save space
-    const uploadDir = path.join(__dirname, '../uploads');
-    const thumbDir = path.join(__dirname, '../uploads/thumbnails');
-    const fp = path.join(uploadDir, sub.filename);
-    const tp = path.join(thumbDir, sub.thumbnailUrl?.split('/').pop() || '');
-    if (fs.existsSync(fp)) fs.unlinkSync(fp);
-    if (fs.existsSync(tp)) fs.unlinkSync(tp);
 
     res.json({ success: true, message: 'Submission rejected' });
   } catch (e) {
@@ -169,11 +150,13 @@ router.post('/:id/reject', protect, async (req, res) => {
   }
 });
 
-// ── ADMIN: Delete submission permanently ──
+// ── ADMIN: Delete permanently ──
 router.delete('/:id', protect, async (req, res) => {
   try {
     const sub = await Submission.findByIdAndDelete(req.params.id);
     if (!sub) return res.status(404).json({ success: false, message: 'Not found' });
+    if (sub.filename) await cloudinary.uploader.destroy(sub.filename).catch(() => {});
+    if (sub.thumbnailFilename) await cloudinary.uploader.destroy(sub.thumbnailFilename).catch(() => {});
     res.json({ success: true });
   } catch (e) {
     res.status(500).json({ success: false, message: e.message });
