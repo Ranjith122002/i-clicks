@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Submit Your iPhone Photos | I-Clicks</title>
+  <meta name="description" content="Share your iPhone photography with millions on I-Clicks. Submit your photos for review."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--red:#e60023;--red2:#ad081b;--green:#0fa37f;--bg:#fff;--bg2:#f5f5f5;--border:#e8e8e8;--text:#111;--text2:#444;--muted:#888;--font:'Inter',-apple-system,sans-serif}
+    body{font-family:var(--font);background:var(--bg);color:var(--text)}
+    a{color:inherit;text-decoration:none}
+    button{cursor:pointer;font-family:var(--font);border:none}
+    img{display:block;max-width:100%}
+
+    .nav{position:sticky;top:0;z-index:200;height:56px;background:rgba(255,255,255,.97);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:16px}
+    .nav-logo{display:flex;align-items:center;gap:8px;font-size:19px;font-weight:900;color:var(--red)}
+    .logo-icon{width:32px;height:32px;background:var(--red);border-radius:8px;display:flex;align-items:center;justify-content:center}
+    .nav-spacer{flex:1}
+    .btn-back{padding:9px 20px;border-radius:24px;font-size:14px;font-weight:700;color:#fff;background:var(--red);transition:background .15s}
+    .btn-back:hover{background:var(--red2)}
+
+    /* HERO */
+    .art-hero{background:linear-gradient(135deg,#111827 0%,#1f2937 50%,#111827 100%);padding:72px 24px 56px;text-align:center;position:relative;overflow:hidden}
+    .art-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 50% 0%,rgba(230,0,35,.15) 0%,transparent 60%)}
+    .chip{display:inline-flex;align-items:center;gap:6px;background:rgba(230,0,35,.15);border:1px solid rgba(230,0,35,.3);color:#ff6b8a;padding:5px 16px;border-radius:20px;font-size:12px;font-weight:700;margin-bottom:20px;letter-spacing:.4px;text-transform:uppercase}
+    .art-hero h1{font-size:clamp(32px,5vw,58px);font-weight:900;letter-spacing:-2px;color:#fff;line-height:1.06;margin-bottom:14px;max-width:680px;margin-left:auto;margin-right:auto}
+    .art-hero p{font-size:17px;color:rgba(255,255,255,.55);max-width:480px;margin:0 auto;line-height:1.6}
+
+    /* MAIN */
+    .page{max-width:1100px;margin:0 auto;padding:60px 24px 80px;display:grid;grid-template-columns:1fr 420px;gap:60px;align-items:start}
+
+    /* LEFT INFO */
+    .info h2{font-size:24px;font-weight:800;margin-bottom:16px}
+    .info p{font-size:15px;color:var(--text2);line-height:1.8;margin-bottom:20px}
+    .benefits{display:flex;flex-direction:column;gap:14px;margin-bottom:32px}
+    .benefit{display:flex;align-items:flex-start;gap:14px;padding:16px;background:var(--bg2);border-radius:12px}
+    .benefit-ico{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+    .benefit-text h4{font-size:14px;font-weight:700;margin-bottom:3px}
+    .benefit-text p{font-size:13px;color:var(--muted);margin:0;line-height:1.5}
+
+    .criteria{margin-bottom:32px}
+    .criteria h3{font-size:18px;font-weight:700;margin-bottom:12px}
+    .criteria ul{list-style:none;display:flex;flex-direction:column;gap:10px}
+    .criteria ul li{font-size:14px;color:var(--text2);display:flex;align-items:center;gap:8px}
+    .criteria ul li::before{content:'✓';color:var(--green);font-weight:700;flex-shrink:0}
+
+    /* SUBMIT FORM */
+    .form-card{background:#fff;border:1.5px solid var(--border);border-radius:20px;padding:32px;position:sticky;top:72px}
+    .form-card h3{font-size:20px;font-weight:800;margin-bottom:6px}
+    .form-card p{font-size:13px;color:var(--muted);margin-bottom:24px}
+
+    /* Upload zone */
+    .upload-zone{
+      border:2px dashed var(--border);border-radius:14px;
+      padding:32px 20px;text-align:center;cursor:pointer;
+      background:var(--bg2);transition:all .2s;margin-bottom:18px;
+      position:relative;
+    }
+    .upload-zone:hover,.upload-zone.drag{border-color:var(--red);background:#fff5f5}
+    .upload-zone input{display:none}
+    .upload-zone .uz-icon{font-size:32px;margin-bottom:8px}
+    .upload-zone .uz-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px}
+    .upload-zone .uz-sub{font-size:12px;color:var(--muted)}
+    .upload-preview{
+      width:100%;height:160px;border-radius:10px;
+      object-fit:cover;display:none;margin-bottom:12px;
+    }
+
+    /* Progress bar */
+    .progress-wrap{display:none;margin-bottom:14px}
+    .progress-bar{height:4px;background:var(--bg2);border-radius:2px;overflow:hidden}
+    .progress-fill{height:100%;background:var(--red);width:0%;transition:width .3s}
+    .progress-label{font-size:11px;color:var(--muted);margin-top:4px;text-align:center}
+
+    .fg{margin-bottom:14px}
+    .fg label{display:block;font-size:11px;font-weight:700;color:var(--text2);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
+    .fg input,.fg textarea{width:100%;border:1.5px solid var(--border);border-radius:10px;padding:10px 14px;font-size:14px;font-family:var(--font);outline:none;transition:border-color .2s;color:var(--text)}
+    .fg input:focus,.fg textarea:focus{border-color:var(--text)}
+    .fg textarea{resize:vertical;min-height:70px;line-height:1.6}
+
+    .fg-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+    .btn-submit{
+      width:100%;height:48px;background:var(--red);color:#fff;
+      border:none;border-radius:12px;font-size:15px;font-weight:700;
+      cursor:pointer;font-family:var(--font);transition:all .2s;
+    }
+    .btn-submit:hover{background:var(--red2);transform:translateY(-1px)}
+    .btn-submit:disabled{opacity:.5;cursor:not-allowed;transform:none}
+
+    /* Success state */
+    .success-state{
+      display:none;text-align:center;padding:40px 20px;
+    }
+    .success-icon{font-size:48px;margin-bottom:16px}
+    .success-state h3{font-size:20px;font-weight:800;margin-bottom:8px;color:var(--green)}
+    .success-state p{font-size:14px;color:var(--muted);line-height:1.7}
+    .btn-another{margin-top:20px;padding:10px 24px;border-radius:24px;background:var(--bg2);font-size:14px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);font-family:var(--font);transition:all .15s}
+    .btn-another:hover{border-color:var(--text);background:#f0f0f0}
+
+    .alert-err{background:#fff5f5;border:1.5px solid #fcc;border-radius:10px;padding:10px 14px;font-size:13px;color:var(--red);margin-bottom:14px;display:none}
+
+    /* RESPONSIVE */
+    @media(max-width:800px){.page{grid-template-columns:1fr}.form-card{position:static}}
+    @media(max-width:500px){.art-hero h1{font-size:28px;letter-spacing:-1px}.fg-row{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="/" class="nav-logo">
+    <div class="logo-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></div>
+    I-Clicks
+  </a>
+  <div class="nav-spacer"></div>
+  <a href="/" class="btn-back">← Back to Gallery</a>
+</nav>
+
+<div class="art-hero">
+  <div class="chip">📷 For Photographers</div>
+  <h1>Share your iPhone<br>photos with the world</h1>
+  <p>Submit your best iPhone shots. Our team reviews every submission and publishes the best ones for millions to see.</p>
+</div>
+
+<div class="page">
+
+  <!-- LEFT: Info -->
+  <div class="info">
+    <h2>Why submit to I-Clicks?</h2>
+    <p>I-Clicks is the largest free iPhone photography gallery. Your photos get seen, saved, and downloaded by millions of people who love iPhone photography.</p>
+
+    <div class="benefits">
+      <div class="benefit">
+        <div class="benefit-ico" style="background:#e8f5e9">🌍</div>
+        <div class="benefit-text">
+          <h4>Global reach</h4>
+          <p>Your photo reaches millions of people searching for iPhone photography worldwide.</p>
+        </div>
+      </div>
+      <div class="benefit">
+        <div class="benefit-ico" style="background:#e3f2fd">🔍</div>
+        <div class="benefit-text">
+          <h4>Found on Google</h4>
+          <p>Every photo gets its own SEO-optimised page, so people find your work on Google too.</p>
+        </div>
+      </div>
+      <div class="benefit">
+        <div class="benefit-ico" style="background:#fce4ec">📊</div>
+        <div class="benefit-text">
+          <h4>Track your views</h4>
+          <p>See how many people viewed and downloaded your photo.</p>
+        </div>
+      </div>
+      <div class="benefit">
+        <div class="benefit-ico" style="background:#fff3e0">⚡</div>
+        <div class="benefit-text">
+          <h4>Fast review</h4>
+          <p>We review all submissions within 48 hours. Approved photos go live immediately.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="criteria">
+      <h3>What we look for</h3>
+      <ul>
+        <li>Photos must be shot on iPhone (any model)</li>
+        <li>High quality — sharp focus, good composition</li>
+        <li>Original — your own photos only</li>
+        <li>Any subject — nature, portrait, street, travel, macro, architecture</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- RIGHT: Form -->
+  <div class="form-card" id="form-wrap">
+    <h3>Submit your photo</h3>
+    <p>Fill in the details and upload your iPhone photo for review</p>
+
+    <div class="alert-err" id="err-msg"></div>
+
+    <!-- Upload zone -->
+    <div class="upload-zone" id="uz" onclick="document.getElementById('file-input').click()"
+      ondragover="event.preventDefault();this.classList.add('drag')"
+      ondragleave="this.classList.remove('drag')"
+      ondrop="handleDrop(event)">
+      <input type="file" id="file-input" accept="image/jpeg,image/jpg,image/png,image/webp" onchange="handleFile(this.files[0])"/>
+      <img class="upload-preview" id="preview" alt="preview"/>
+      <div id="uz-content">
+        <div class="uz-icon">📷</div>
+        <div class="uz-title">Drop your iPhone photo here</div>
+        <div class="uz-sub">JPG, PNG, WEBP · Max 25MB · Click or drag</div>
+      </div>
+    </div>
+
+    <!-- Progress -->
+    <div class="progress-wrap" id="prog-wrap">
+      <div class="progress-bar"><div class="progress-fill" id="prog-fill"></div></div>
+      <div class="progress-label" id="prog-label">Uploading…</div>
+    </div>
+
+    <!-- Fields -->
+    <div class="fg-row">
+      <div class="fg"><label>Your Name *</label><input type="text" id="f-name" placeholder="Ranjith Kumar"/></div>
+      <div class="fg"><label>Your Email *</label><input type="email" id="f-email" placeholder="you@example.com"/></div>
+    </div>
+    <div class="fg"><label>Photo Title *</label><input type="text" id="f-title" placeholder="e.g. Golden Hour at Marine Drive"/></div>
+    <div class="fg"><label>Description</label><textarea id="f-desc" placeholder="Tell us about this photo…"></textarea></div>
+    <div class="fg-row">
+      <div class="fg"><label>Location</label><input type="text" id="f-loc" placeholder="Mumbai, India"/></div>
+      <div class="fg"><label>iPhone Model</label><input type="text" id="f-device" placeholder="iPhone 15 Pro" value="iPhone"/></div>
+    </div>
+    <div class="fg"><label>Tags (comma separated)</label><input type="text" id="f-tags" placeholder="nature, sunset, golden hour"/></div>
+
+    <button class="btn-submit" id="submit-btn" onclick="submitPhoto()">Submit for Review →</button>
+  </div>
+
+  <!-- Success state (replaces form) -->
+  <div class="success-state" id="success-wrap">
+    <div class="success-icon">🎉</div>
+    <h3>Submitted successfully!</h3>
+    <p>Thank you! Your photo is now in our review queue.<br>We'll review it within 48 hours.<br>If approved, it will go live on I-Clicks for everyone to see.</p>
+    <button class="btn-another" onclick="resetForm()">Submit another photo</button>
+  </div>
+
+</div>
+
+<script>
+let selectedFile = null;
+
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('uz').classList.remove('drag');
+  const file = e.dataTransfer.files[0];
+  if (file) handleFile(file);
+}
+
+function handleFile(file) {
+  if (!file) return;
+  if (file.size > 25 * 1024 * 1024) { showErr('File too large. Max 25MB.'); return; }
+  selectedFile = file;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const prev = document.getElementById('preview');
+    prev.src = e.target.result;
+    prev.style.display = 'block';
+    document.getElementById('uz-content').style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+}
+
+async function submitPhoto() {
+  const name  = document.getElementById('f-name').value.trim();
+  const email = document.getElementById('f-email').value.trim();
+  const title = document.getElementById('f-title').value.trim();
+
+  if (!selectedFile) { showErr('Please select a photo first.'); return; }
+  if (!name)  { showErr('Please enter your name.'); return; }
+  if (!email) { showErr('Please enter your email.'); return; }
+  if (!title) { showErr('Please enter a photo title.'); return; }
+
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.textContent = 'Submitting…';
+  document.getElementById('err-msg').style.display = 'none';
+  document.getElementById('prog-wrap').style.display = 'block';
+
+  const formData = new FormData();
+  formData.append('photo', selectedFile);
+  formData.append('name', name);
+  formData.append('email', email);
+  formData.append('title', title);
+  formData.append('description', document.getElementById('f-desc').value);
+  formData.append('location', document.getElementById('f-loc').value);
+  formData.append('device', document.getElementById('f-device').value || 'iPhone');
+  formData.append('tags', document.getElementById('f-tags').value);
+
+  try {
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', '/api/submissions');
+
+    xhr.upload.onprogress = e => {
+      if (e.lengthComputable) {
+        const pct = Math.round(e.loaded / e.total * 100);
+        document.getElementById('prog-fill').style.width = pct + '%';
+        document.getElementById('prog-label').textContent = `Uploading… ${pct}%`;
+      }
+    };
+
+    xhr.onload = () => {
+      const data = JSON.parse(xhr.responseText);
+      document.getElementById('prog-wrap').style.display = 'none';
+      if (data.success) {
+        // Show success
+        document.getElementById('form-wrap').style.display = 'none';
+        document.getElementById('success-wrap').style.display = 'block';
+      } else {
+        showErr(data.message || 'Submission failed. Please try again.');
+        btn.disabled = false;
+        btn.textContent = 'Submit for Review →';
+      }
+    };
+
+    xhr.onerror = () => {
+      showErr('Network error. Please try again.');
+      btn.disabled = false;
+      btn.textContent = 'Submit for Review →';
+      document.getElementById('prog-wrap').style.display = 'none';
+    };
+
+    xhr.send(formData);
+  } catch (e) {
+    showErr(e.message);
+    btn.disabled = false;
+    btn.textContent = 'Submit for Review →';
+  }
+}
+
+function resetForm() {
+  selectedFile = null;
+  document.getElementById('preview').style.display = 'none';
+  document.getElementById('uz-content').style.display = 'block';
+  document.getElementById('file-input').value = '';
+  ['f-name','f-email','f-title','f-desc','f-loc','f-tags'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('f-device').value = 'iPhone';
+  document.getElementById('submit-btn').disabled = false;
+  document.getElementById('submit-btn').textContent = 'Submit for Review →';
+  document.getElementById('prog-fill').style.width = '0%';
+  document.getElementById('form-wrap').style.display = 'block';
+  document.getElementById('success-wrap').style.display = 'none';
+}
+
+function showErr(msg) {
+  const el = document.getElementById('err-msg');
+  el.textContent = msg;
+  el.style.display = 'block';
+  el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+</script>
+</body>
+</html>

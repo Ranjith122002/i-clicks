@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>I-Clicks — Find ideas for stunning iPhone Photography</title>
+  <meta name="description" content="Discover millions of free HD iPhone photos. Find ideas for nature, portrait, street, sunset, travel and more."/>
+  <meta name="robots" content="index, follow"/>
+  <link rel="canonical" href="https://i-clicks.com"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+    --red:#111111;
+    --red2:#333333;
+      --green:#0fa37f;
+      --bg:#ffffff;
+      --bg2:#f0ede8;
+      --bg3:#f5f5f5;
+      --border:#e8e8e8;
+      --text:#111111;
+      --text2:#555;
+      --muted:#888;
+      --font:'Inter',-apple-system,sans-serif;
+      --nav-h:56px;
+    }
+    html{scroll-behavior:smooth}
+    body{font-family:var(--font);background:var(--bg);color:var(--text);overflow-x:hidden}
+    a{color:inherit;text-decoration:none}
+    button{cursor:pointer;font-family:var(--font);border:none;background:none}
+    ::-webkit-scrollbar{width:5px}
+    ::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px}
+
+    /* ═══════ NAV ═══════ */
+    .nav{
+      position:fixed;top:0;left:0;right:0;z-index:400;
+      height:var(--nav-h);
+      background:rgba(255,255,255,0.97);
+      backdrop-filter:blur(10px);
+      border-bottom:1px solid var(--border);
+      display:flex;align-items:center;
+      padding:0 24px;gap:0;
+    }
+    .nav-logo{
+      display:flex;align-items:center;gap:9px;
+      font-size:20px;font-weight:900;
+      color:var(--red); /* I-Clicks in red like Pinterest */
+      white-space:nowrap;flex-shrink:0;margin-right:8px;
+    }
+    .logo-icon{
+      width:34px;height:34px;
+      background:var(--red);
+      border-radius:9px;
+      display:flex;align-items:center;justify-content:center;
+    }
+    .nav-explore{
+      padding:0 14px;font-size:15px;font-weight:700;
+      color:var(--text);height:var(--nav-h);
+      display:flex;align-items:center;transition:color .2s;
+    }
+    .nav-explore:hover{color:var(--red)}
+    .nav-spacer{flex:1}
+    .nav-links{display:flex;align-items:center}
+    .nav-link{
+      padding:0 14px;font-size:14px;font-weight:700; /* bold */
+      color:var(--text);height:var(--nav-h);
+      display:flex;align-items:center;transition:color .2s;white-space:nowrap;
+    }
+    .nav-link:hover{color:var(--red)}
+    .btn-login{
+      padding:10px 24px;border-radius:24px;
+      font-size:14px;font-weight:700;
+      color:#fff;background:var(--red);
+      margin-left:8px;transition:background .15s;white-space:nowrap;
+    }
+    .btn-login:hover{background:var(--red2)}
+    .btn-signup-nav{
+      padding:10px 24px;border-radius:24px;
+      font-size:14px;font-weight:700;
+      color:var(--text);background:#efefef;
+      margin-left:6px;transition:background .15s;white-space:nowrap;
+    }
+    .btn-signup-nav:hover{background:#e0e0e0}
+
+    /* ═══════ HERO ═══════ */
+    .hero{
+      min-height:100vh;
+      display:flex;align-items:center;
+      padding-top:var(--nav-h);
+      background:#ffffff;
+      overflow:hidden;
+      position:relative;
+    }
+    /* LEFT — proper padding so text never gets cut */
+    .hero-left{
+      flex:1;min-width:0;
+      padding:0 40px 0 7vw;
+      display:flex;flex-direction:column;
+      justify-content:center;
+    }
+    /* "Find ideas for" static line */
+    .hero-static{
+      font-size:clamp(32px,3.8vw,58px);
+      font-weight:900;letter-spacing:-1.5px;
+      line-height:1.1;color:#111111;
+      display:block;
+      margin-bottom:2px;
+    }
+    /* Single rotating word line — just ONE word shows at a time */
+    .rline{
+      display:block;
+      height:clamp(40px,4.5vw,68px);
+      position:relative;
+      margin-bottom:22px;
+      overflow:hidden; /* clip so only current word shows */
+    }
+    .rword{
+      position:absolute;
+      left:0;top:0;
+      font-size:clamp(32px,3.8vw,58px);
+      font-weight:900;
+      letter-spacing:-1.5px;
+      line-height:1.1;
+      color:#0fa37f;
+      white-space:nowrap;
+      transition:opacity .45s ease, transform .45s cubic-bezier(.4,0,.2,1);
+    }
+    .rword.show { opacity:1; transform:translateY(0); }
+    .rword.above { opacity:0; transform:translateY(-100%); pointer-events:none; }
+    .rword.below { opacity:0; transform:translateY(100%); pointer-events:none; }
+
+    /* Dots */
+    .hero-dots{display:flex;gap:8px;margin-bottom:32px}
+    .dot{
+      width:10px;height:10px;border-radius:50%;
+      background:#d8d8d8;cursor:pointer;border:none;padding:0;
+      transition:all .25s;
+    }
+    .dot.on{background:var(--green);transform:scale(1.3)}
+
+    /* CTA */
+    .hero-cta{display:flex;align-items:center;gap:24px;flex-wrap:wrap}
+    .btn-join{
+      padding:14px 28px;border-radius:32px;
+      font-size:16px;font-weight:700;color:#fff;background:var(--red);
+      box-shadow:0 4px 16px rgba(230,0,35,.3);
+      transition:all .2s;
+    }
+    .btn-join:hover{background:var(--red2);transform:translateY(-2px);box-shadow:0 8px 28px rgba(230,0,35,.35)}
+    .link-acct{
+      font-size:15px;font-weight:600;
+      color:var(--text);text-decoration:underline;cursor:pointer;
+      transition:color .2s;
+    }
+    .link-acct:hover{color:var(--red)}
+
+    /* RIGHT — two overlapping cards exactly like Pinterest/image 2 */
+    .hero-right{
+      flex:0 0 50%;
+      position:relative;
+      height:calc(100vh - var(--nav-h));
+      min-height:480px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    /* Wrapper — fixed size, enough room for both overlapping cards */
+    .cards-wrap{
+      position:relative;
+      width:360px;
+      height:420px;
+    }
+
+    /* Green rounded-square badge — sits top-right, outside big card */
+    .h-badge{
+      position:absolute;
+      top:0px;
+      right:-15px;
+      width:56px;height:56px;
+      border-radius:16px;
+      background:var(--green);
+      display:flex;align-items:center;justify-content:center;
+      z-index:10;
+      box-shadow:0 4px 18px rgba(15,163,127,.4);
+      animation:popIn .6s ease .5s both;
+    }
+
+    /* Big card — left, slight left tilt, tall portrait */
+    .h-card-big{
+      position:absolute;
+      left:0;
+      top:50px; /* pushed down so badge clears above */
+      width:240px;
+      height:320px;
+      transform:rotate(-6deg);
+      border-radius:28px;
+      overflow:hidden;
+      box-shadow:0 16px 48px rgba(0,0,0,.18);
+      background:#e0e0e0; /* light fallback until photo loads */
+      animation:cardSlideBig .8s cubic-bezier(.25,.8,.25,1) .1s both;
+      z-index:5;
+    }
+
+    /* Small card — overlaps bottom-right of big card */
+    .h-card-sm{
+      position:absolute;
+      right:0;
+      bottom:10px;
+      width:185px;
+      height:240px;
+      transform:rotate(6deg);
+      border-radius:22px;
+      overflow:hidden;
+      box-shadow:0 16px 48px rgba(0,0,0,.18);
+      background:#e0e0e0; /* light fallback until photo loads */
+      animation:cardSlideSm .8s cubic-bezier(.25,.8,.25,1) .25s both;
+      z-index:6;
+    }
+
+    .h-card-big img,.h-card-sm img{
+      width:100%;height:100%;object-fit:cover;display:block;
+    }
+
+    /* Pause btn */
+    .pause-btn{
+      position:absolute;bottom:5%;right:5%;
+      width:40px;height:40px;border-radius:50%;
+      background:rgba(255,255,255,.9);
+      display:flex;align-items:center;justify-content:center;
+      box-shadow:0 2px 12px rgba(0,0,0,.12);
+      z-index:20;border:none;cursor:pointer;
+    }
+
+    @keyframes popIn{from{opacity:0;transform:scale(.3)}to{opacity:1;transform:scale(1)}}
+    @keyframes cardSlideBig{
+      from{opacity:0;transform:rotate(-6deg) translateY(40px)}
+      to{opacity:1;transform:rotate(-6deg) translateY(0)}
+    }
+    @keyframes cardSlideSm{
+      from{opacity:0;transform:rotate(6deg) translateY(40px)}
+      to{opacity:1;transform:rotate(6deg) translateY(0)}
+    }
+
+    /* ═══════ FEATURE SECTIONS ═══════ */
+    .feat{
+      display:flex;align-items:center;
+      min-height:580px;
+      padding:80px 8vw;gap:72px;
+    }
+    .feat.rev{flex-direction:row-reverse}
+    .feat.gray{background:var(--bg3)}
+
+    .feat-vis{
+      flex:0 0 460px;
+      background:var(--bg2);
+      border-radius:32px;
+      min-height:420px;
+      display:flex;align-items:center;justify-content:center;
+      padding:32px;
+      position:relative;
+    }
+
+    /* Feature 1 search mock */
+    .smock{
+      background:#fff;border-radius:18px;width:100%;
+      box-shadow:0 4px 24px rgba(0,0,0,.08);overflow:hidden;
+    }
+    .smock-top{
+      display:flex;align-items:center;gap:10px;
+      padding:14px 16px;border-bottom:1px solid var(--border);
+    }
+    .smock-input{
+      flex:1;height:36px;border:1.5px solid var(--border);
+      border-radius:10px;padding:0 12px;font-size:13px;
+      font-family:var(--font);outline:none;color:var(--text);
+    }
+    .smock-chips{
+      padding:10px 14px;display:flex;gap:7px;
+      border-bottom:1px solid var(--border);flex-wrap:wrap;
+    }
+    .chip{padding:5px 12px;border-radius:16px;font-size:12px;font-weight:600;cursor:pointer}
+    .ch1{background:#e8f5e9;color:#2e7d32}
+    .ch2{background:#e3f2fd;color:#1565c0}
+    .ch3{background:#fce4ec;color:#c62828}
+    .ch4{background:#fff3e0;color:#e65100}
+    .smock-grid{
+      display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:12px;
+    }
+    .smock-cell{
+      height:88px;border-radius:10px;overflow:hidden;
+      position:relative;
+    }
+    .smock-cell img{width:100%;height:100%;object-fit:cover}
+    .smock-cell.fb1{background:linear-gradient(135deg,#1565c0,#1976d2)}
+    .smock-cell.fb2{background:linear-gradient(135deg,#c45c1a,#e07030)}
+    .smock-cell.fb3{background:linear-gradient(135deg,#2d6a4f,#40916c)}
+    .smock-cell.fb4{background:linear-gradient(135deg,#6a1e4a,#8e3a6e)}
+    .smock-tag{
+      position:absolute;bottom:5px;left:7px;
+      background:rgba(0,0,0,.55);color:#fff;
+      font-size:9px;font-weight:700;padding:2px 7px;border-radius:6px;
+    }
+
+    /* Feature 2 board mock */
+    .bmock{
+      background:#fff;border-radius:18px;
+      width:100%;max-width:320px;
+      padding:16px;box-shadow:0 4px 24px rgba(0,0,0,.08);
+    }
+    .bmock-grid{
+      display:grid;grid-template-columns:2fr 1fr;
+      grid-template-rows:1fr 1fr;gap:5px;
+      height:190px;border-radius:12px;
+      overflow:hidden;margin-bottom:14px;
+    }
+    .bm-c{overflow:hidden}
+    .bm-c img{width:100%;height:100%;object-fit:cover}
+    .bm-c:nth-child(1){grid-row:1/3;background:linear-gradient(135deg,#e76f51,#f4a261)}
+    .bm-c:nth-child(2){background:linear-gradient(135deg,#2a9d8f,#264653)}
+    .bm-c:nth-child(3){background:linear-gradient(135deg,#e9c46a,#f4a261)}
+    .bmock-name{font-size:15px;font-weight:700;margin-bottom:5px}
+    .bmock-row{display:flex;align-items:center;justify-content:space-between}
+    .bmock-count{font-size:12px;color:var(--muted)}
+    .bmock-avs{display:flex}
+    .bav{
+      width:26px;height:26px;border-radius:50%;
+      border:2px solid #fff;margin-left:-7px;
+    }
+    .bav:first-child{margin-left:0;background:#e76f51}
+    .bav:nth-child(2){background:#2a9d8f}
+
+    /* Feature 3 visual search mock */
+    .vsmock{position:relative;width:260px}
+    .vscard{
+      border-radius:28px;overflow:hidden;
+      height:360px;position:relative;
+      box-shadow:0 8px 36px rgba(0,0,0,.15);
+    }
+    .vscard img{width:100%;height:100%;object-fit:cover}
+    .vscard-bg{
+      position:absolute;inset:0;
+      background:linear-gradient(145deg,#e8d5c4,#f0c8b0);
+    }
+    .vst{
+      position:absolute;background:#fff;
+      border-radius:24px;padding:7px 14px;
+      font-size:12px;font-weight:700;
+      box-shadow:0 3px 12px rgba(0,0,0,.14);
+      display:flex;align-items:center;gap:6px;
+      white-space:nowrap;animation:tf 3s ease-in-out infinite;
+    }
+    .vst1{top:50px;right:16px}
+    .vst2{top:160px;left:12px;animation-delay:.8s}
+    .vst3{bottom:60px;right:12px;background:#111;color:#fff;animation-delay:1.6s}
+    @keyframes tf{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+
+    /* FEAT TEXT */
+    .feat-text{flex:1}
+    .feat-text h2{
+      font-size:clamp(26px,3vw,38px);font-weight:800;
+      letter-spacing:-.6px;line-height:1.2;margin-bottom:14px;
+    }
+    .feat-text p{
+      font-size:16px;color:var(--text2);
+      line-height:1.8;max-width:460px;margin-bottom:28px;
+    }
+    /* "Learn more" styled as a link, not a button — like Pinterest newsroom */
+    .feat-link{
+      font-size:15px;font-weight:700;
+      color:var(--red);
+      text-decoration:underline;
+      cursor:pointer;
+      transition:color .2s;
+      display:inline-flex;align-items:center;gap:6px;
+    }
+    .feat-link:hover{color:var(--red2)}
+    .feat-link::after{content:'→';font-size:16px}
+
+    /* ═══════ SIGN UP SECTION ═══════ */
+    .su-sec{
+      position:relative;min-height:100vh;
+      display:flex;align-items:center;overflow:hidden;
+    }
+
+    .mosaic{
+      position:absolute;inset:0;
+      display:grid;
+      grid-template-columns:repeat(5,1fr);
+      grid-template-rows:repeat(3,1fr);
+      gap:4px;padding:4px;
+    }
+    .mc{
+      border-radius:10px;overflow:hidden;
+    }
+    .mc img{width:100%;height:100%;object-fit:cover}
+    .mc:nth-child(1){background:linear-gradient(135deg,#1b4332,#2d6a4f)}
+    .mc:nth-child(2){background:linear-gradient(135deg,#923d10,#c45c1a)}
+    .mc:nth-child(3){background:linear-gradient(135deg,#0d47a1,#1565c0)}
+    .mc:nth-child(4){background:linear-gradient(135deg,#4a1535,#6a1e4a)}
+    .mc:nth-child(5){background:linear-gradient(135deg,#263238,#37474f)}
+    .mc:nth-child(6){background:linear-gradient(135deg,#4e342e,#6d4c41)}
+    .mc:nth-child(7){background:linear-gradient(135deg,#1b5e20,#388e3c)}
+    .mc:nth-child(8){background:linear-gradient(135deg,#b71c1c,#d32f2f)}
+    .mc:nth-child(9){background:linear-gradient(135deg,#003c8f,#1565c0)}
+    .mc:nth-child(10){background:linear-gradient(135deg,#4a148c,#6a1b9a)}
+    .mc:nth-child(11){background:linear-gradient(135deg,#bf360c,#e64a19)}
+    .mc:nth-child(12){background:linear-gradient(135deg,#004d40,#00695c)}
+    .mc:nth-child(13){background:linear-gradient(135deg,#880e4f,#ad1457)}
+    .mc:nth-child(14){background:linear-gradient(135deg,#1a237e,#283593)}
+    .mc:nth-child(15){background:linear-gradient(135deg,#33691e,#558b2f)}
+
+    .mosaic-ov{position:absolute;inset:0;background:rgba(0,0,0,.5);z-index:1}
+
+    .su-headline{
+      position:absolute;left:8vw;bottom:36%;z-index:2;
+      color:#fff;font-size:clamp(30px,4vw,56px);
+      font-weight:900;letter-spacing:-1.5px;line-height:1.1;
+      text-shadow:0 2px 20px rgba(0,0,0,.3);
+    }
+
+    .su-card{
+      position:absolute;right:8vw;top:50%;
+      transform:translateY(-50%);
+      background:#fff;border-radius:24px;
+      padding:36px 32px;width:390px;
+      box-shadow:0 20px 80px rgba(0,0,0,.25);
+      z-index:3;
+    }
+    .su-title{font-size:26px;font-weight:800;text-align:center;margin-bottom:4px}
+    .su-sub{font-size:14px;color:var(--muted);text-align:center;margin-bottom:22px}
+
+    .fg{margin-bottom:13px}
+    .fg label{
+      display:block;font-size:11px;font-weight:700;
+      color:var(--text2);margin-bottom:5px;
+      text-transform:uppercase;letter-spacing:.5px;
+    }
+    .fg input{
+      width:100%;height:44px;
+      border:1.5px solid var(--border);border-radius:10px;
+      padding:0 14px;font-size:14px;
+      font-family:var(--font);outline:none;
+      transition:border-color .2s;
+    }
+    .fg input:focus{border-color:var(--text)}
+    .fg-hint{font-size:11px;color:var(--muted);margin-top:4px}
+
+    .btn-cont{
+      width:100%;height:46px;background:var(--red);color:#fff;
+      border:none;border-radius:10px;font-size:15px;font-weight:700;
+      cursor:pointer;font-family:var(--font);transition:all .2s;margin-top:6px;
+    }
+    .btn-cont:hover{background:var(--red2);transform:translateY(-1px)}
+
+    .or-ln{
+      display:flex;align-items:center;gap:10px;
+      margin:16px 0;color:var(--muted);font-size:13px;font-weight:600;
+    }
+    .or-ln::before,.or-ln::after{content:'';flex:1;height:1px;background:var(--border)}
+
+    .btn-goog{
+      width:100%;height:44px;
+      border:1.5px solid var(--border);border-radius:10px;
+      display:flex;align-items:center;justify-content:center;gap:10px;
+      font-size:14px;font-weight:600;cursor:pointer;
+      font-family:var(--font);background:#fff;color:var(--text);
+      transition:background .15s;
+    }
+    .btn-goog:hover{background:var(--bg3)}
+
+    .su-terms{font-size:11px;color:var(--muted);text-align:center;margin-top:14px;line-height:1.7}
+    .su-terms a{color:var(--text);font-weight:600;text-decoration:underline}
+    .su-login{text-align:center;margin-top:12px;font-size:13px;color:var(--muted)}
+    .su-login a{color:var(--red);font-weight:700;cursor:pointer}
+
+    /* ═══════ FOOTER ═══════ */
+    .footer{background:var(--bg2);border-top:1px solid var(--border);padding:48px 8vw 32px}
+    .fg-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;margin-bottom:40px}
+    .fl-logo{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+    .fl-icon{width:28px;height:28px;background:var(--red);border-radius:8px;display:flex;align-items:center;justify-content:center}
+    .fl-text{font-size:16px;font-weight:900;color:var(--red)}
+    .fl-desc{font-size:13px;color:var(--muted);line-height:1.7;max-width:280px}
+    .fc h4{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text);margin-bottom:14px}
+    .fc ul{list-style:none;display:flex;flex-direction:column;gap:9px}
+    .fc ul li a{font-size:13px;color:var(--muted);transition:color .15s}
+    .fc ul li a:hover{color:var(--text)}
+    .fb{border-top:1px solid var(--border);padding-top:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+    .fb-copy{font-size:13px;color:var(--muted)}
+
+    /* ═══════ SCROLL REVEAL ═══════ */
+    .reveal{opacity:0;transform:translateY(32px);transition:opacity .7s ease,transform .7s ease}
+    .reveal.in{opacity:1;transform:none}
+
+    /* ═══════ RESPONSIVE ═══════ */
+    /* ── MEDIUM LAPTOP (900–1200px) ── */
+    @media(max-width:1200px){
+      .hero-left{padding:0 32px 0 6vw}
+      .cards-wrap{width:320px;height:380px}
+      .h-card-big{width:215px;height:285px}
+      .h-card-sm{width:165px;height:215px}
+      .feat{padding:60px 6vw;gap:40px}
+      .feat-vis{flex:0 0 380px;min-height:380px}
+    }
+
+    /* ── TABLET LANDSCAPE (768–900px) ── */
+    @media(max-width:900px){
+      .nav-link{display:none}
+      .hero-left{padding:0 24px 0 5vw}
+      .hero-static{font-size:38px;letter-spacing:-1px}
+      .rword{font-size:38px;letter-spacing:-1px}
+      .rline{height:48px}
+      .cards-wrap{width:290px;height:345px}
+      .h-badge{top:0;right:-12px;width:48px;height:48px;border-radius:13px}
+      .h-card-big{width:195px;height:260px;top:44px;border-radius:24px}
+      .h-card-sm{width:150px;height:195px;bottom:8px;border-radius:20px}
+      .feat,.feat.rev{flex-direction:column;min-height:auto;padding:48px 5vw;gap:28px}
+      .feat-vis{flex:none;width:100%;min-height:300px}
+      .bmock{width:100%;max-width:100%}
+      .vsmock{width:100%}
+      .vscard{height:260px}
+      .su-sec{flex-direction:column;min-height:auto}
+      .su-headline{position:relative;left:auto;bottom:auto;top:auto;font-size:32px;padding:40px 24px 20px;color:#fff;z-index:2}
+      .su-card{position:relative;right:auto;top:auto;transform:none;width:calc(100% - 48px);margin:0 auto 40px;box-shadow:0 8px 40px rgba(0,0,0,.2)}
+      .mosaic{position:absolute;height:200px;top:0}
+      .fg-grid{grid-template-columns:1fr 1fr;gap:24px}
+    }
+
+    /* ── TABLET PORTRAIT / LARGE PHONE (600–768px) ── */
+    @media(max-width:768px){
+      .hero{flex-direction:column;min-height:auto;padding-bottom:48px}
+      .hero-left{order:2;padding:28px 24px 0;width:100%}
+      .hero-right{order:1;width:100%;height:auto;flex:none;padding:36px 0 8px;display:flex;align-items:center;justify-content:center}
+      .hero-static{font-size:34px}
+      .rword{font-size:34px}
+      .rline{height:42px}
+      .cards-wrap{width:270px;height:315px}
+      .h-badge{top:0;right:-10px;width:44px;height:44px;border-radius:12px}
+      .h-card-big{width:182px;height:243px;top:40px;border-radius:22px}
+      .h-card-sm{width:140px;height:182px;bottom:8px;border-radius:18px}
+      .hero-cta{flex-wrap:wrap;gap:12px}
+      .su-headline{font-size:28px;padding:32px 20px 16px}
+      .su-card{width:calc(100% - 32px)}
+      .feat-text h2{font-size:24px}
+      .feat-text p{font-size:15px}
+      .fg-grid{grid-template-columns:1fr 1fr;gap:20px}
+    }
+
+    /* ── PHONE (below 600px) ── */
+    @media(max-width:600px){
+      .nav{padding:0 14px;gap:8px}
+      .btn-login{padding:8px 14px;font-size:13px}
+      .btn-signup-nav{padding:8px 14px;font-size:13px}
+      .hero{padding-bottom:36px}
+      .hero-left{padding:20px 20px 0}
+      .hero-right{padding:28px 0 4px}
+      .hero-static{font-size:28px;letter-spacing:-0.5px}
+      .rword{font-size:28px;letter-spacing:-0.5px}
+      .rline{height:35px}
+      .cards-wrap{width:230px;height:268px}
+      .h-badge{top:0;right:-8px;width:38px;height:38px;border-radius:10px}
+      .h-badge svg{width:18px;height:18px}
+      .h-card-big{width:155px;height:207px;top:34px;border-radius:20px}
+      .h-card-sm{width:119px;height:155px;bottom:6px;border-radius:16px}
+      .btn-join{width:100%;text-align:center;padding:13px}
+      .link-acct{text-align:center}
+      .hero-cta{flex-direction:column;align-items:stretch;gap:10px}
+      .feat,.feat.rev{padding:36px 20px;gap:20px}
+      .feat-text h2{font-size:20px}
+      .feat-text p{font-size:14px}
+      .feat-vis{min-height:240px;padding:18px;border-radius:18px}
+      .su-headline{font-size:22px;padding:24px 18px 10px}
+      .su-card{padding:24px 20px;width:calc(100% - 24px)}
+      .sc-title{font-size:20px}
+      .fg-grid{grid-template-columns:1fr;gap:16px}
+      .footer{padding:32px 18px 24px}
+      .fb{flex-direction:column;align-items:flex-start;gap:8px}
+    }
+
+    /* ── SMALL PHONE (below 400px) ── */
+    @media(max-width:400px){
+      .hero-static{font-size:24px}
+      .rword{font-size:24px}
+      .rline{height:30px}
+      .cards-wrap{width:200px;height:233px}
+      .h-card-big{width:135px;height:180px;top:30px}
+      .h-card-sm{width:104px;height:135px;bottom:4px}
+      .h-badge{width:32px;height:32px;border-radius:9px}
+      .h-badge svg{width:15px;height:15px}
+      .btn-login{display:none}
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="/" class="nav-logo">
+    <div class="logo-icon">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+        <circle cx="12" cy="13" r="4"/>
+      </svg>
+    </div>
+    I-Clicks
+  </a>
+
+  <a href="/explore" class="nav-explore">Explore</a>
+  <div class="nav-spacer"></div>
+
+  <div class="nav-links">
+    <a href="/about.html" class="nav-link">About</a>
+    <a href="/photographers.html" class="nav-link">For Photographers</a>
+    <a href="/explore" class="nav-link">Create</a>
+    <a href="/news.html" class="nav-link">News</a>
+  </div>
+
+  <button class="btn-login" onclick="goTo('su-sec')">Log in</button>
+  <button class="btn-signup-nav" onclick="goTo('su-sec')">Sign up</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <!-- Static first line -->
+    <span class="hero-static">Find ideas for</span>
+
+    <!-- Rotating green text — FIXED -->
+    <div class="rline" id="rline">
+      <span class="rword show" data-i="0">stunning sunsets</span>
+      <span class="rword below" data-i="1">nature photography</span>
+      <span class="rword below" data-i="2">street portraits</span>
+      <span class="rword below" data-i="3">travel moments</span>
+      <span class="rword below" data-i="4">macro close-ups</span>
+      <span class="rword below" data-i="5">iPhone wallpapers</span>
+    </div>
+
+    <div class="hero-dots" id="hdots">
+      <button class="dot on" onclick="jump(0)"></button>
+      <button class="dot" onclick="jump(1)"></button>
+      <button class="dot" onclick="jump(2)"></button>
+      <button class="dot" onclick="jump(3)"></button>
+      <button class="dot" onclick="jump(4)"></button>
+      <button class="dot" onclick="jump(5)"></button>
+    </div>
+
+    <div class="hero-cta">
+      <button class="btn-join" onclick="goTo('su-sec')">Join I-Clicks for free</button>
+      <span class="link-acct" onclick="window.location.href='/explore'">I already have an account</span>
+    </div>
+  </div>
+
+  <!-- RIGHT: two overlapping tilted cards -->
+  <div class="hero-right">
+    <div class="cards-wrap">
+      <div class="h-badge">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="7 10 12 15 17 10"/>
+          <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+      </div>
+      <div class="h-card-big" id="hbig"></div>
+      <div class="h-card-sm" id="hsm"></div>
+    </div>
+    <button class="pause-btn" id="pbtn" onclick="togglePause()" title="Pause">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="#555">
+        <rect x="6" y="4" width="4" height="16" rx="1"/>
+        <rect x="14" y="4" width="4" height="16" rx="1"/>
+      </svg>
+    </button>
+  </div>
+</section>
+
+<!-- FEATURE 1 — Search -->
+<section class="feat gray reveal">
+  <div class="feat-vis">
+    <div class="smock">
+      <div class="smock-top">
+        <span style="color:#999;font-size:18px;cursor:pointer">‹</span>
+        <input class="smock-input" value="sunset golden hour" readonly/>
+        <svg width="16" height="16" fill="none" stroke="#999" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke-width="2"/></svg>
+      </div>
+      <div class="smock-chips">
+        <div class="chip ch1">Category ∨</div>
+        <div class="chip ch2">iPhone Model ∨</div>
+        <div class="chip ch3">Location ∨</div>
+        <div class="chip ch4">Style ∨</div>
+      </div>
+      <div class="smock-grid" id="f1grid">
+        <div class="smock-cell fb1"><div class="smock-tag">Golden Hour</div></div>
+        <div class="smock-cell fb2"><div class="smock-tag">Sunset</div></div>
+        <div class="smock-cell fb3"><div class="smock-tag">Nature</div></div>
+        <div class="smock-cell fb4"><div class="smock-tag">Portrait</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="feat-text">
+    <h2>Search by any keyword,<br>find the perfect shot</h2>
+    <p>Type "sunset", "macro", "street photography" — or filter by iPhone model, location, or shooting style. Every photo is tagged so you always find exactly what you're looking for.</p>
+    <a href="/about.html" class="feat-link">Learn more</a>
+  </div>
+</section>
+
+<!-- FEATURE 2 — Save -->
+<section class="feat rev reveal" style="transition-delay:.1s">
+  <div class="feat-vis">
+    <div class="bmock">
+      <div class="bmock-grid" id="f2grid">
+        <div class="bm-c"></div>
+        <div class="bm-c"></div>
+        <div class="bm-c"></div>
+      </div>
+      <div class="bmock-name">My iPhone Collection</div>
+      <div class="bmock-row">
+        <span class="bmock-count" id="bmc">Loading…</span>
+        <div class="bmock-avs">
+          <div class="bav"></div>
+          <div class="bav"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="feat-text">
+    <h2>Save your favorites,<br>build collections</h2>
+    <p>Click Save on any photo to add it to your personal collection. Organize iPhone photography by theme, mood, project or location. Share collections with others.</p>
+    <a href="/photographers.html" class="feat-link">Learn more</a>
+  </div>
+</section>
+
+<!-- FEATURE 3 — Visual tags -->
+<section class="feat gray reveal" style="transition-delay:.2s">
+  <div class="feat-vis">
+    <div class="vsmock">
+      <div class="vscard" id="f3card">
+        <div class="vscard-bg" id="f3bg"></div>
+        <div class="vst vst1">
+          <div style="width:11px;height:11px;background:#e74c4c;border-radius:3px;flex-shrink:0"></div>
+          Golden light
+        </div>
+        <div class="vst vst2">≋ iPhone Portrait mode</div>
+        <div class="vst vst3">✦ Cinematic style</div>
+      </div>
+    </div>
+  </div>
+  <div class="feat-text">
+    <h2>Search visually<br>with image tags</h2>
+    <p>Every photo on I-Clicks is tagged with style, device, and location. Click any tag to instantly discover hundreds of similar iPhone shots. Visual search that actually works.</p>
+    <a href="/visual-search.html" class="feat-link">Learn more</a>
+  </div>
+</section>
+
+<!-- SIGN UP SECTION -->
+<section class="su-sec" id="su-sec">
+  <div class="mosaic" id="mosaic">
+    <div class="mc"></div><div class="mc"></div><div class="mc"></div>
+    <div class="mc"></div><div class="mc"></div><div class="mc"></div>
+    <div class="mc"></div><div class="mc"></div><div class="mc"></div>
+    <div class="mc"></div><div class="mc"></div><div class="mc"></div>
+    <div class="mc"></div><div class="mc"></div><div class="mc"></div>
+  </div>
+  <div class="mosaic-ov"></div>
+
+  <div class="su-headline">Sign up to get<br>your ideas</div>
+
+  <div class="su-card">
+    <div class="su-title">Welcome to I-Clicks</div>
+    <div class="su-sub">Find new ideas to try</div>
+    <div class="fg"><label>Email</label><input type="email" id="sc-email" placeholder="Email"/></div>
+    <div class="fg">
+      <label>Password</label>
+      <input type="password" id="sc-pass" placeholder="Create a password"/>
+      <div class="fg-hint">Use 8 or more letters, numbers and symbols</div>
+    </div>
+    <div class="fg"><label>Birthdate</label><input type="date" id="sc-dob"/></div>
+    <button class="btn-cont" onclick="doSignup()">Continue</button>
+    <div class="or-ln">OR</div>
+    <button class="btn-goog" onclick="doSignup()">
+      <svg width="18" height="18" viewBox="0 0 48 48">
+        <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+        <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+        <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+        <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.35-8.16 2.35-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+      </svg>
+      Continue with Google
+    </button>
+    <p class="su-terms">By continuing, you agree to I-Clicks' <a href="#">Terms of Service</a> and acknowledge you've read our <a href="#">Privacy Policy</a>. <a href="#">Notice at collection</a>.</p>
+    <p class="su-login">Already a member? <a onclick="window.location.href='/explore'">Log in</a></p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="fg-grid">
+    <div>
+      <div class="fl-logo">
+        <div class="fl-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+            <circle cx="12" cy="13" r="4"/>
+          </svg>
+        </div>
+        <span class="fl-text">I-Clicks</span>
+      </div>
+      <p class="fl-desc">The best free iPhone photography gallery. Discover, save and download HD photos shot on iPhone — completely free.</p>
+    </div>
+    <div class="fc">
+      <h4>Explore</h4>
+      <ul>
+        <li><a href="/explore">Browse all</a></li>
+        <li><a href="/ideas/nature">Nature</a></li>
+        <li><a href="/ideas/sunset">Sunset</a></li>
+        <li><a href="/ideas/portrait">Portrait</a></li>
+        <li><a href="/ideas/travel">Travel</a></li>
+      </ul>
+    </div>
+    <div class="fc">
+      <h4>Categories</h4>
+      <ul>
+        <li><a href="/ideas/street">Street</a></li>
+        <li><a href="/ideas/macro">Macro</a></li>
+        <li><a href="/ideas/architecture">Architecture</a></li>
+        <li><a href="/ideas/landscape">Landscape</a></li>
+        <li><a href="/ideas/minimal">Minimal</a></li>
+      </ul>
+    </div>
+    <div class="fc">
+      <h4>Company</h4>
+      <ul>
+        <li><a href="/about.html">About</a></li>
+        <li><a href="/photographers.html">For Photographers</a></li>
+        <li><a href="/sitemap.xml">Sitemap</a></li>
+        <li><a href="#">Privacy Policy</a></li>
+        <li><a href="/admin/login.html">Admin</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="fb">
+    <span class="fb-copy">© 2024 I-Clicks. All rights reserved.</span>
+    <span style="font-size:13px;color:var(--muted)">Made with ❤️ for iPhone photographers</span>
+  </div>
+</footer>
+
+<script>
+// ── ROTATING WORDS ──────────────────────────────────
+const words = document.querySelectorAll('.rword');
+const dots  = document.querySelectorAll('.dot');
+let cur = 0, paused = false;
+
+function jump(idx) {
+  if (idx === cur) return;
+  // 1. Outgoing word slides down & fades (becomes 'above' = second line)
+  words[cur].className = 'rword above';
+  dots[cur].classList.remove('on');
+  const prev = cur;
+  cur = idx;
+  // 2. Incoming word slides in from top
+  words[cur].className = 'rword show';
+  dots[cur].classList.add('on');
+  // 3. After transition completes, hide the outgoing word
+  setTimeout(() => { words[prev].className = 'rword below'; }, 600);
+  loadHeroPhotos();
+}
+
+function next() {
+  if (!paused) jump((cur + 1) % words.length);
+}
+
+setInterval(next, 2800);
+
+function togglePause() {
+  paused = !paused;
+  document.getElementById('pbtn').innerHTML = paused
+    ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="#555"><polygon points="5 3 19 12 5 21 5 3"/></svg>'
+    : '<svg width="14" height="14" viewBox="0 0 24 24" fill="#555"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>';
+}
+
+// ── PHOTOS ──────────────────────────────────────────
+let photos = [];
+
+// Fixed 7 photo IDs — these always show on homepage
+const FIXED_IDS = [
+  '69e4cd6eca58b5f775ac2bca',
+  '69e4cd6dca58b5f775ac2bbd',
+  '69e4cd6dca58b5f775ac2bb1',
+  '69e4cd6dca58b5f775ac2ba6',
+  '69e4cd6cca58b5f775ac2b9c',
+  '69e4cd6cca58b5f775ac2b93',
+  '69e4cd6bca58b5f775ac2b8b'
+];
+
+async function loadData() {
+  try {
+    const d = await (await fetch('/api/photos?limit=20')).json();
+    if (d.success && d.photos.length) {
+      // Only show the 7 fixed photos on homepage
+      photos = d.photos.filter(p => FIXED_IDS.includes(p._id));
+      // If fixed photos not found, fallback to all
+      if (photos.length === 0) photos = d.photos;
+      loadHeroPhotos();
+      loadFeaturePhotos();
+      loadMosaicPhotos();
+    }
+  } catch(e) { console.warn('Could not load photos', e); }
+}
+
+function setCardPhoto(el, photo) {
+  if (!photo) return;
+  const url = photo.thumbnailUrl || photo.url;
+  // Use background-image — most reliable cross-browser approach
+  el.style.backgroundImage = "url('" + url + "')";
+  el.style.backgroundSize = 'cover';
+  el.style.backgroundPosition = 'center';
+  el.style.backgroundRepeat = 'no-repeat';
+}
+
+function loadHeroPhotos() {
+  if (!photos.length) return;
+  const big = document.getElementById('hbig');
+  const sm  = document.getElementById('hsm');
+  const p1 = photos[cur % photos.length];
+  const p2 = photos[(cur + 1) % photos.length];
+  setCardPhoto(big, p1);
+  setCardPhoto(sm, p2);
+}
+
+function setBg(el, url) {
+  if (!el || !url) return;
+  el.style.backgroundImage = `url('${url}')`;
+  el.style.backgroundSize = 'cover';
+  el.style.backgroundPosition = 'center';
+}
+
+function loadFeaturePhotos() {
+  if (!photos.length) return;
+
+  // Feature 1 — 4 search grid cells
+  const cells = document.querySelectorAll('#f1grid .smock-cell');
+  photos.slice(0, 4).forEach((p, i) => { if (cells[i]) setBg(cells[i], p.thumbnailUrl||p.url); });
+
+  // Feature 2 — board grid
+  const bcells = document.querySelectorAll('#f2grid .bm-c');
+  photos.slice(1, 4).forEach((p, i) => { if (bcells[i]) setBg(bcells[i], p.thumbnailUrl||p.url); });
+  const bmc = document.getElementById('bmc');
+  if (bmc) bmc.textContent = photos.length + ' saved photos';
+
+  // Feature 3 — visual search card
+  const p5 = photos[4] || photos[0];
+  if (p5) {
+    const bg3 = document.getElementById('f3bg');
+    if (bg3) { setBg(bg3, p5.thumbnailUrl||p5.url); bg3.style.opacity='0.75'; }
+  }
+}
+
+function loadMosaicPhotos() {
+  if (!photos.length) return;
+  document.querySelectorAll('.mc').forEach((cell, i) => {
+    const p = photos[i % photos.length];
+    if (p) setBg(cell, p.thumbnailUrl||p.url);
+  });
+}
+
+// ── SCROLL REVEAL ────────────────────────────────────
+const revObs = new IntersectionObserver(
+  entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); }),
+  { threshold: 0.1 }
+);
+document.querySelectorAll('.reveal').forEach(el => revObs.observe(el));
+
+// ── SIGN UP ──────────────────────────────────────────
+function doSignup() {
+  const email = document.getElementById('sc-email').value.trim();
+  if (!email) { document.getElementById('sc-email').focus(); return; }
+  const btn = document.querySelector('.btn-cont');
+  btn.textContent = 'Welcome! Redirecting…';
+  btn.style.background = '#0fa37f';
+  setTimeout(() => window.location.href = '/explore', 1400);
+}
+
+// ── HELPERS ──────────────────────────────────────────
+function goTo(id) {
+  document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+}
+
+document.addEventListener('DOMContentLoaded', loadData);
+</script>
+</body>
+</html>

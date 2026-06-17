@@ -1,0 +1,43 @@
+/* ═══════════════════════════════════════
+   I-CLICKS — Responsive Styles
+   ═══════════════════════════════════════ */
+
+@media (max-width: 1200px) {
+  .gallery-grid { columns: 4 200px; }
+}
+
+@media (max-width: 900px) {
+  .gallery-grid { columns: 3 180px; }
+
+  .lightbox-info { width: 260px; }
+
+  .hero-title { letter-spacing: -1px; }
+}
+
+@media (max-width: 680px) {
+  .gallery-grid { columns: 2 150px; column-gap: 8px; padding: 8px; }
+
+  .nav { padding: 0 16px; gap: 12px; }
+  .nav-search { max-width: 200px; }
+  .nav-links { display: none; }
+
+  .hero { padding: 40px 16px 24px; }
+
+  .lightbox-inner { flex-direction: column; max-height: 95vh; }
+  .lightbox-img-wrap { max-height: 60vh; }
+  .lightbox-info { width: 100%; border-left: none; border-top: 1px solid var(--color-border); }
+  .lightbox-nav.prev { left: 8px; }
+  .lightbox-nav.next { right: 8px; }
+
+  .category-bar { padding: 10px 16px; gap: 6px; }
+  .cat-pill { padding: 5px 12px; font-size: 12px; }
+}
+
+@media (max-width: 400px) {
+  .gallery-grid { columns: 2 140px; }
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}

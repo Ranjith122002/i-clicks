@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Categories — I-Clicks Admin</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/admin/css/admin.css" />
+</head>
+<body>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">I<span>-</span>Clicks</div>
+    <nav class="sidebar-nav">
+      <a href="/admin/dashboard.html" class="nav-item"><span class="nav-icon">▦</span> Dashboard</a>
+      <a href="/admin/upload.html" class="nav-item"><span class="nav-icon">↑</span> Upload Photo</a>
+      <a href="/admin/photos.html" class="nav-item"><span class="nav-icon">◫</span> All Photos</a>
+      <a href="/admin/categories.html" class="nav-item active"><span class="nav-icon">≡</span> Categories</a>
+      <div class="nav-divider"></div>
+      <a href="/" class="nav-item" target="_blank"><span class="nav-icon">↗</span> View Site</a>
+      <button class="nav-item nav-logout" onclick="logout()"><span class="nav-icon">⎋</span> Logout</button>
+    </nav>
+  </aside>
+
+  <div class="main-wrap">
+    <header class="topbar">
+      <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+      <h1 class="page-title">Categories</h1>
+      <div class="topbar-right">
+        <span class="admin-name" id="admin-name">Admin</span>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <div class="alert" id="cat-alert"></div>
+
+      <div style="display:grid; grid-template-columns: 1fr 340px; gap:24px; align-items:start;">
+
+        <!-- Categories list -->
+        <div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Slug</th>
+                  <th>Photos</th>
+                  <th>Order</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="cat-tbody">
+                <tr><td colspan="5" style="text-align:center; padding:30px; color:#666;">Loading…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Add category form -->
+        <div style="background:#111; border:1px solid #242424; border-radius:12px; padding:24px;">
+          <h2 style="font-size:15px; font-weight:600; margin-bottom:20px;" id="cat-form-title">Add Category</h2>
+          <input type="hidden" id="edit-cat-id" />
+          <div class="form-group" style="margin-bottom:16px;">
+            <label>Name *</label>
+            <input type="text" id="cat-name" placeholder="e.g. Nature" />
+          </div>
+          <div class="form-group" style="margin-bottom:16px;">
+            <label>Description</label>
+            <textarea id="cat-desc" rows="2" placeholder="Short description…"></textarea>
+          </div>
+          <div class="form-group" style="margin-bottom:20px;">
+            <label>Sort Order</label>
+            <input type="number" id="cat-order" value="0" min="0" />
+          </div>
+          <div style="display:flex; gap:10px;">
+            <button class="btn btn-primary" id="cat-save-btn" onclick="saveCategory()">Add Category</button>
+            <button class="btn btn-secondary" id="cat-cancel-btn" onclick="cancelCatEdit()" style="display:none;">Cancel</button>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script src="/admin/js/admin.js"></script>
+  <script>
+    requireAuth();
+    let editingCatId = null;
+
+    async function loadCategories() {
+      const tbody = document.getElementById('cat-tbody');
+      try {
+        const res = await fetch('/api/categories');
+        const data = await res.json();
+        const cats = data.categories || [];
+
+        if (cats.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:30px; color:#666;">No categories yet. Add one →</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = cats.map(c => `
+          <tr>
+            <td><div class="table-title">${escHtml(c.name)}</div></td>
+            <td style="color:#666; font-size:13px; font-family:monospace;">${escHtml(c.slug)}</td>
+            <td style="color:#777; font-size:13px;">${c.photoCount || 0}</td>
+            <td style="color:#777; font-size:13px;">${c.sortOrder || 0}</td>
+            <td>
+              <div style="display:flex; gap:6px;">
+                <button class="btn btn-secondary" style="padding:5px 10px; font-size:12px;" onclick='editCategory(${JSON.stringify(c).replace(/'/g,"&#39;")})'>Edit</button>
+                <button class="btn btn-danger" style="padding:5px 10px; font-size:12px;" onclick="deleteCategory('${c._id}', this)">Del</button>
+              </div>
+            </td>
+          </tr>
+        `).join('');
+      } catch (e) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#c66; padding:20px;">Error loading categories</td></tr>`;
+      }
+    }
+
+    function editCategory(cat) {
+      editingCatId = cat._id;
+      document.getElementById('edit-cat-id').value = cat._id;
+      document.getElementById('cat-name').value = cat.name;
+      document.getElementById('cat-desc').value = cat.description || '';
+      document.getElementById('cat-order').value = cat.sortOrder || 0;
+      document.getElementById('cat-form-title').textContent = 'Edit Category';
+      document.getElementById('cat-save-btn').textContent = 'Save Changes';
+      document.getElementById('cat-cancel-btn').style.display = 'block';
+      document.getElementById('cat-name').focus();
+    }
+
+    function cancelCatEdit() {
+      editingCatId = null;
+      document.getElementById('cat-name').value = '';
+      document.getElementById('cat-desc').value = '';
+      document.getElementById('cat-order').value = '0';
+      document.getElementById('cat-form-title').textContent = 'Add Category';
+      document.getElementById('cat-save-btn').textContent = 'Add Category';
+      document.getElementById('cat-cancel-btn').style.display = 'none';
+    }
+
+    async function saveCategory() {
+      const name = document.getElementById('cat-name').value.trim();
+      if (!name) { showAlert('cat-alert', 'Name is required.', 'error'); return; }
+
+      const payload = {
+        name,
+        description: document.getElementById('cat-desc').value.trim(),
+        sortOrder: parseInt(document.getElementById('cat-order').value) || 0
+      };
+
+      const token = getToken();
+      let data;
+
+      if (editingCatId) {
+        data = await authFetch(`/api/categories/${editingCatId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+      } else {
+        data = await authFetch('/api/categories', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+      }
+
+      if (data && data.success) {
+        showAlert('cat-alert', editingCatId ? 'Category updated.' : 'Category added.', 'success');
+        cancelCatEdit();
+        loadCategories();
+      } else {
+        showAlert('cat-alert', data?.message || 'Failed to save.', 'error');
+      }
+    }
+
+    async function deleteCategory(id, btn) {
+      if (!confirm('Delete this category? Photos will not be deleted.')) return;
+      btn.disabled = true;
+      const data = await authFetch(`/api/categories/${id}`, { method: 'DELETE' });
+      if (data && data.success) {
+        showAlert('cat-alert', 'Category deleted.', 'success');
+        loadCategories();
+      } else {
+        showAlert('cat-alert', data?.message || 'Delete failed.', 'error');
+        btn.disabled = false;
+      }
+    }
+
+    loadCategories();
+  </script>
+</body>
+</html>

@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Introducing Visual Tag Search | I-Clicks</title>
+  <meta name="description" content="Discover I-Clicks' new visual tag search — click any tag on a photo to instantly find similar iPhone photography."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--red:#e60023;--red2:#ad081b;--green:#0fa37f;--bg:#fff;--bg2:#f5f5f5;--border:#e8e8e8;--text:#111;--text2:#444;--muted:#888;--font:'Inter',-apple-system,sans-serif}
+    body{font-family:var(--font);background:var(--bg);color:var(--text)}
+    a{color:inherit;text-decoration:none}
+    button{cursor:pointer;font-family:var(--font);border:none}
+    img{display:block;max-width:100%}
+
+    .nav{position:sticky;top:0;z-index:200;height:56px;background:rgba(255,255,255,.97);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:16px}
+    .nav-logo{display:flex;align-items:center;gap:8px;font-size:19px;font-weight:900;color:var(--red)}
+    .logo-icon{width:32px;height:32px;background:var(--red);border-radius:8px;display:flex;align-items:center;justify-content:center}
+    .nav-spacer{flex:1}
+    .btn-back{padding:9px 20px;border-radius:24px;font-size:14px;font-weight:700;color:#fff;background:var(--red);transition:background .15s}
+    .btn-back:hover{background:var(--red2)}
+
+    /* HERO */
+    .art-hero{
+      background:linear-gradient(160deg,#0f1923 0%,#162032 50%,#1a2a1a 100%);
+      padding:80px 24px 64px;text-align:center;position:relative;overflow:hidden;
+    }
+    .art-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 40% at 50% 100%,rgba(15,163,127,.18) 0%,transparent 60%)}
+    .art-hero .chip{display:inline-flex;align-items:center;gap:6px;background:rgba(15,163,127,.15);border:1px solid rgba(15,163,127,.35);color:var(--green);padding:5px 16px;border-radius:20px;font-size:12px;font-weight:700;margin-bottom:20px;letter-spacing:.4px;text-transform:uppercase}
+    .art-hero h1{font-size:clamp(32px,5vw,60px);font-weight:900;letter-spacing:-2px;color:#fff;line-height:1.06;margin-bottom:16px;max-width:700px;margin-left:auto;margin-right:auto}
+    .art-hero p{font-size:18px;color:rgba(255,255,255,.55);max-width:520px;margin:0 auto;line-height:1.6}
+    .art-meta{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:28px;font-size:13px;color:rgba(255,255,255,.4)}
+
+    /* WIDE IMAGE BLOCK */
+    .wide-img{
+      width:100%;max-width:1100px;margin:-48px auto 0;
+      border-radius:24px;overflow:hidden;
+      box-shadow:0 24px 80px rgba(0,0,0,.25);
+      position:relative;z-index:2;
+      height:480px;
+      background:linear-gradient(135deg,#c45c1a,#6a1e4a);
+    }
+    .wide-img img{width:100%;height:100%;object-fit:cover}
+
+    /* BODY */
+    .art-body{max-width:760px;margin:0 auto;padding:72px 24px 80px}
+    .art-body h2{font-size:28px;font-weight:800;letter-spacing:-.5px;margin:48px 0 16px}
+    .art-body h3{font-size:20px;font-weight:700;margin:32px 0 12px}
+    .art-body p{font-size:17px;color:var(--text2);line-height:1.8;margin-bottom:20px}
+    .art-body ul{margin:16px 0 20px 24px;display:flex;flex-direction:column;gap:10px}
+    .art-body ul li{font-size:16px;color:var(--text2);line-height:1.7}
+
+    .pull{border-left:4px solid var(--green);padding:18px 24px;margin:32px 0;background:rgba(15,163,127,.05);border-radius:0 12px 12px 0}
+    .pull p{font-size:19px;font-weight:600;color:var(--text);font-style:italic;margin:0;line-height:1.5}
+
+    /* Tag demo interactive */
+    .tag-demo{
+      background:var(--bg2);border-radius:24px;padding:36px;
+      margin:40px 0;text-align:center;
+    }
+    .tag-demo p{font-size:14px;color:var(--muted);margin-bottom:20px}
+    .demo-img{
+      width:280px;height:340px;border-radius:20px;
+      background:linear-gradient(145deg,#c45c1a,#6a1e4a);
+      margin:0 auto;position:relative;overflow:hidden;
+      box-shadow:0 8px 32px rgba(0,0,0,.15);
+    }
+    .demo-img img{width:100%;height:100%;object-fit:cover}
+    .demo-tag{
+      position:absolute;background:#fff;border-radius:20px;
+      padding:7px 14px;font-size:13px;font-weight:700;
+      box-shadow:0 3px 12px rgba(0,0,0,.15);
+      cursor:pointer;white-space:nowrap;
+      display:flex;align-items:center;gap:6px;
+      transition:transform .15s;
+    }
+    .demo-tag:hover{transform:scale(1.06)}
+    .dt1{top:55px;right:20px}
+    .dt2{top:170px;left:14px;animation:dtf 3s ease-in-out infinite}
+    .dt3{bottom:65px;right:14px;background:#111;color:#fff;animation:dtf 3s ease-in-out 1s infinite}
+    @keyframes dtf{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+    .tag-demo-hint{font-size:13px;color:var(--muted);margin-top:16px}
+
+    /* Steps */
+    .steps{display:flex;flex-direction:column;gap:24px;margin:32px 0}
+    .step{display:flex;gap:20px;align-items:flex-start}
+    .step-num{
+      width:40px;height:40px;border-radius:50%;
+      background:var(--red);color:#fff;
+      font-size:16px;font-weight:800;
+      display:flex;align-items:center;justify-content:center;
+      flex-shrink:0;
+    }
+    .step-body h4{font-size:16px;font-weight:700;margin-bottom:4px}
+    .step-body p{font-size:14px;color:var(--muted);margin:0;line-height:1.6}
+
+    /* Mini gallery */
+    .mini-gallery{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:32px 0}
+    .mg-cell{border-radius:12px;overflow:hidden;height:120px;background:#ddd;cursor:pointer;transition:transform .2s}
+    .mg-cell:hover{transform:scale(1.04)}
+    .mg-cell img{width:100%;height:100%;object-fit:cover}
+    .mg-cell.c1{background:linear-gradient(135deg,#1565c0,#1976d2)}
+    .mg-cell.c2{background:linear-gradient(135deg,#2d6a4f,#40916c)}
+    .mg-cell.c3{background:linear-gradient(135deg,#c45c1a,#e07030)}
+    .mg-cell.c4{background:linear-gradient(135deg,#6a1e4a,#8e3a6e)}
+
+    .cta-sec{background:var(--red);border-radius:24px;padding:48px 40px;text-align:center;margin:48px 0}
+    .cta-sec h2{font-size:30px;font-weight:900;color:#fff;margin-bottom:10px;letter-spacing:-.5px}
+    .cta-sec p{font-size:16px;color:rgba(255,255,255,.8);margin-bottom:24px}
+    .cta-btn{padding:14px 32px;border-radius:28px;background:#fff;color:var(--red);font-size:16px;font-weight:700;cursor:pointer;border:none;transition:all .2s;font-family:var(--font)}
+    .cta-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.2)}
+
+    .related{padding:40px 0;border-top:1px solid var(--border);margin-top:60px}
+    .related h2{font-size:22px;font-weight:800;margin-bottom:24px}
+    .rel-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+    .rel-card{border-radius:14px;overflow:hidden;cursor:pointer;transition:transform .2s;background:var(--bg2)}
+    .rel-card:hover{transform:translateY(-4px)}
+    .rel-img{height:140px;overflow:hidden}
+    .rel-img img{width:100%;height:100%;object-fit:cover}
+    .rel-body{padding:14px}
+    .rel-body span{font-size:11px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.5px}
+    .rel-body h3{font-size:15px;font-weight:700;margin-top:5px;line-height:1.3}
+
+    @media(max-width:700px){
+      .wide-img{border-radius:16px;height:280px;margin-top:-24px}
+      .mini-gallery{grid-template-columns:repeat(2,1fr)}
+      .rel-grid{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="/" class="nav-logo">
+    <div class="logo-icon">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+        <circle cx="12" cy="13" r="4"/>
+      </svg>
+    </div>
+    I-Clicks
+  </a>
+  <div class="nav-spacer"></div>
+  <a href="/" class="btn-back">← Back to Gallery</a>
+</nav>
+
+<div class="art-hero">
+  <div class="chip">✦ New Feature</div>
+  <h1>Introducing visual<br>tag search</h1>
+  <p>Click any tag on any photo to instantly discover hundreds of similar iPhone photos — organised by style, device, and location.</p>
+  <div class="art-meta">
+    <span>📅 2024</span>
+    <span>•</span>
+    <span>4 min read</span>
+    <span>•</span>
+    <span>I-Clicks Team</span>
+  </div>
+</div>
+
+<div style="padding:0 24px">
+  <div class="wide-img" id="wide-img">
+    <div id="wide-img-fill" style="width:100%;height:100%;background:linear-gradient(135deg,#c45c1a,#6a1e4a)"></div>
+  </div>
+</div>
+
+<div class="art-body">
+  <p>Today, we're excited to introduce one of the most powerful features on I-Clicks: <strong>Visual Tag Search</strong>. Every photo on I-Clicks is now tagged with detailed metadata — and clicking any tag takes you directly to a full gallery of similar shots.</p>
+
+  <div class="pull">
+    <p>"One click on a tag, and you're inside a world of similar iPhone photography — instantly."</p>
+  </div>
+
+  <h2>How visual tag search works</h2>
+  <p>When you open any photo on I-Clicks, you'll see tags floating over it — things like <em>Golden light</em>, <em>iPhone Portrait mode</em>, or <em>Cinematic style</em>. These aren't just labels — they're live search links.</p>
+
+  <!-- Interactive demo -->
+  <div class="tag-demo">
+    <p>Click any tag below to try it</p>
+    <div class="demo-img" id="demo-img">
+      <div id="demo-fill" style="width:100%;height:100%;background:linear-gradient(145deg,#c45c1a,#6a1e4a)"></div>
+      <div class="demo-tag dt1" onclick="window.location.href='/ideas/golden-hour'">
+        <div style="width:11px;height:11px;background:#e74c4c;border-radius:3px"></div>
+        Golden light →
+      </div>
+      <div class="demo-tag dt2" onclick="window.location.href='/ideas/portrait'">
+        ≋ iPhone Portrait mode →
+      </div>
+      <div class="demo-tag dt3" onclick="window.location.href='/ideas/cinematic'">
+        ✦ Cinematic style →
+      </div>
+    </div>
+    <p class="tag-demo-hint">↑ Click any tag to see all similar photos</p>
+  </div>
+
+  <h2>What you can search for</h2>
+  <p>Visual tags on I-Clicks cover everything — shooting style, device model, location, mood, and more:</p>
+
+  <ul>
+    <li><strong>Shooting style</strong> — Portrait mode, Cinematic mode, Night mode, Macro</li>
+    <li><strong>iPhone model</strong> — iPhone 15 Pro, iPhone 14 Pro Max, iPhone 13</li>
+    <li><strong>Location</strong> — Goa, Mumbai, Ladakh, Delhi, Bengaluru</li>
+    <li><strong>Mood & tone</strong> — Golden hour, Moody, Vibrant, Minimal, Dark</li>
+    <li><strong>Subject</strong> — Nature, Street, Portrait, Architecture, Travel</li>
+  </ul>
+
+  <h2>How to find photos in 3 steps</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h4>Open any photo</h4>
+        <p>Click any photo in the gallery to open the full lightbox view</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h4>Click a tag</h4>
+        <p>In the sidebar, you'll see tags like #nature, #golden-hour, #iPhone15Pro. Click any one.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <h4>Explore the results</h4>
+        <p>You'll land on a dedicated page showing all photos with that tag — with SEO-friendly URLs like /ideas/golden-hour</p>
+      </div>
+    </div>
+  </div>
+
+  <h2>Browse by category</h2>
+  <div class="mini-gallery" id="mini-gal">
+    <div class="mg-cell c1" onclick="window.location.href='/ideas/nature'"></div>
+    <div class="mg-cell c2" onclick="window.location.href='/ideas/sunset'"></div>
+    <div class="mg-cell c3" onclick="window.location.href='/ideas/portrait'"></div>
+    <div class="mg-cell c4" onclick="window.location.href='/ideas/travel'"></div>
+  </div>
+
+  <div class="cta-sec">
+    <h2>Try visual tag search now</h2>
+    <p>Open any photo and click a tag to explore</p>
+    <button class="cta-btn" onclick="window.location.href='/explore'">Explore photos →</button>
+  </div>
+
+  <div class="related">
+    <h2>More from I-Clicks</h2>
+    <div class="rel-grid">
+      <div class="rel-card" onclick="window.location.href='/about.html'">
+        <div class="rel-img" style="background:linear-gradient(135deg,#2d6a4f,#40916c)"></div>
+        <div class="rel-body">
+          <span>About</span>
+          <h3>The world's best iPhone photography platform</h3>
+        </div>
+      </div>
+      <div class="rel-card" onclick="window.location.href='/photographers.html'">
+        <div class="rel-img" style="background:linear-gradient(135deg,#c45c1a,#e07030)"></div>
+        <div class="rel-body">
+          <span>Photographers</span>
+          <h3>Upload your iPhone photos to I-Clicks</h3>
+        </div>
+      </div>
+      <div class="rel-card" onclick="window.location.href='/explore'">
+        <div class="rel-img" style="background:linear-gradient(135deg,#1565c0,#1976d2)"></div>
+        <div class="rel-body">
+          <span>Gallery</span>
+          <h3>Explore thousands of free iPhone photos</h3>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+async function loadPhotos() {
+  try {
+    const d = await (await fetch('/api/photos?limit=8')).json();
+    if (!d.success || !d.photos.length) return;
+    const ps = d.photos;
+
+    // Wide hero image
+    const wf = document.getElementById('wide-img-fill');
+    if (ps[0]) { wf.style.backgroundImage=`url('${ps[0].thumbnailUrl||ps[0].url}')`;wf.style.backgroundSize='cover';wf.style.backgroundPosition='center'; }
+
+    // Demo image
+    const df = document.getElementById('demo-fill');
+    if (ps[1]) { df.style.backgroundImage=`url('${ps[1].thumbnailUrl||ps[1].url}')`;df.style.backgroundSize='cover';df.style.backgroundPosition='center'; }
+
+    // Mini gallery
+    const cells = document.querySelectorAll('#mini-gal .mg-cell');
+    ps.slice(2,6).forEach((p,i)=>{
+      if(cells[i]){cells[i].style.backgroundImage=`url('${p.thumbnailUrl||p.url}')`;cells[i].style.backgroundSize='cover';cells[i].style.backgroundPosition='center';}
+    });
+  } catch(e) {}
+}
+document.addEventListener('DOMContentLoaded', loadPhotos);
+</script>
+</body>
+</html>

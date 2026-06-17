@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Explore iPhone Photography | I-Clicks</title>
+  <meta name="description" content="Explore the best iPhone photography — nature, portrait, street, sunset, travel, macro and more."/>
+  <meta name="robots" content="index, follow"/>
+  <link rel="canonical" href="https://i-clicks.com/explore"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#fff;--bg2:#f4f4f4;--bg3:#ebebeb;--border:#e0e0e0;--border2:#ccc;--text:#111;--text2:#555;--muted:#999;--red:#e60023;--red2:#ad081b;--nav-h:64px;--radius:16px;--font:'Inter',-apple-system,sans-serif}
+    body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh}
+    a{color:inherit;text-decoration:none}
+    img{display:block;max-width:100%;width:100%;height:100%;object-fit:cover}
+    button{cursor:pointer;font-family:var(--font);border:none;background:none}
+    ::-webkit-scrollbar{width:5px}
+    ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+
+    .nav{position:sticky;top:0;z-index:200;height:var(--nav-h);background:rgba(255,255,255,0.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:12px}
+    .nav-logo{display:flex;align-items:center;gap:9px;font-size:20px;font-weight:800;color:var(--text);white-space:nowrap;flex-shrink:0}
+    .logo-icon{width:36px;height:36px;background:var(--text);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .nav-explore{padding:0 14px;font-size:15px;font-weight:600;color:var(--text);white-space:nowrap;height:var(--nav-h);display:flex;align-items:center;border-bottom:3px solid var(--text)}
+    .nav-search{flex:1;max-width:580px;position:relative}
+    .search-box{display:flex;align-items:center;height:48px;background:var(--bg2);border:2px solid transparent;border-radius:24px;padding:0 18px 0 48px;transition:all 0.2s;cursor:text}
+    .nav-search:focus-within .search-box{background:#fff;border-color:var(--text);box-shadow:0 2px 16px rgba(0,0,0,0.1)}
+    .search-icon-pos{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none}
+    .search-real{position:absolute;inset:0;border:none;outline:none;background:transparent;padding:0 18px 0 48px;font-size:15px;font-family:var(--font);border-radius:24px;z-index:2;cursor:text;color:var(--text)}
+    .nav-right{display:flex;align-items:center;gap:8px;margin-left:auto;flex-shrink:0}
+    .btn-login{padding:8px 20px;border-radius:24px;font-size:14px;font-weight:600;color:var(--text);border:2px solid var(--border2);background:#fff;transition:all 0.15s}
+    .btn-login:hover{border-color:var(--text)}
+    .btn-signup{padding:8px 20px;border-radius:24px;font-size:14px;font-weight:700;color:#fff;background:var(--red);border:2px solid var(--red);transition:all 0.15s}
+    .btn-signup:hover{background:var(--red2);border-color:var(--red2)}
+
+    .page{max-width:1300px;margin:0 auto;padding:0 24px}
+
+    .sec-head{display:flex;align-items:center;justify-content:space-between;padding:36px 0 20px}
+    .sec-head h2{font-size:24px;font-weight:800;letter-spacing:-.5px}
+    .see-more{padding:8px 20px;border-radius:24px;font-size:14px;font-weight:600;border:2px solid var(--border2);color:var(--text);transition:all 0.15s}
+    .see-more:hover{border-color:var(--text);background:var(--bg2)}
+
+    /* FEATURED */
+    .featured-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:8px}
+    .feat-card{position:relative;border-radius:var(--radius);overflow:hidden;height:320px;cursor:pointer;transition:transform 0.3s ease,box-shadow 0.3s ease}
+    .feat-card:hover{transform:scale(1.02);box-shadow:0 12px 40px rgba(0,0,0,0.2)}
+    .feat-card img{transition:transform 0.5s ease;width:100%;height:100%;object-fit:cover}
+    .feat-card:hover img{transform:scale(1.06)}
+    .feat-card-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.7) 0%,rgba(0,0,0,0.1) 50%,transparent 70%)}
+    .feat-card-label{position:absolute;bottom:0;left:0;right:0;padding:20px;color:#fff;font-size:18px;font-weight:800;line-height:1.3;text-align:center}
+
+    /* CATEGORY CARDS — now link by category ID */
+    .cat-scroll{display:flex;gap:12px;overflow-x:auto;scrollbar-width:none;padding-bottom:8px}
+    .cat-scroll::-webkit-scrollbar{display:none}
+    .cat-card{flex-shrink:0;width:180px;border-radius:var(--radius);overflow:hidden;cursor:pointer;position:relative;transition:transform 0.25s ease,box-shadow 0.25s ease;text-decoration:none}
+    .cat-card:hover{transform:translateY(-4px);box-shadow:0 8px 28px rgba(0,0,0,0.15)}
+    .cat-card-img{height:200px;position:relative;overflow:hidden;background:#ddd}
+    .cat-card-img img{transition:transform 0.4s ease;width:100%;height:100%;object-fit:cover}
+    .cat-card:hover .cat-card-img img{transform:scale(1.06)}
+    .cat-card-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.6) 0%,transparent 60%)}
+    .cat-card-name{position:absolute;bottom:10px;left:0;right:0;text-align:center;color:#fff;font-size:14px;font-weight:700}
+    .cat-card-count{padding:8px;font-size:12px;color:var(--muted);text-align:center;background:#fff}
+
+    /* CATEGORY GALLERY — shows all photos in selected category */
+    .cat-gallery-section{display:none;margin-top:8px}
+    .cat-gallery-section.visible{display:block}
+    .cat-gallery-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding:12px 0}
+    .cat-gallery-title{font-size:20px;font-weight:800}
+    .cat-gallery-count{font-size:14px;color:var(--muted)}
+    .btn-close-cat{padding:7px 16px;border-radius:20px;font-size:13px;font-weight:600;border:1.5px solid var(--border2);color:var(--text2);background:#fff;cursor:pointer;transition:all .15s}
+    .btn-close-cat:hover{border-color:var(--text);color:var(--text)}
+
+    /* Masonry gallery */
+    .cat-masonry{columns:4 200px;column-gap:10px}
+    .cat-photo-card{break-inside:avoid;margin-bottom:10px;border-radius:12px;overflow:hidden;cursor:pointer;position:relative;transition:transform .25s,box-shadow .25s}
+    .cat-photo-card:hover{transform:scale(1.02);box-shadow:0 8px 24px rgba(0,0,0,0.15)}
+    .cat-photo-card img{width:100%;height:auto;display:block}
+    .cat-photo-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.55) 0%,transparent 55%);opacity:0;transition:opacity .25s}
+    .cat-photo-card:hover .cat-photo-overlay{opacity:1}
+    .cat-photo-title{position:absolute;bottom:10px;left:10px;right:10px;color:#fff;font-size:12px;font-weight:600;opacity:0;transition:opacity .25s}
+    .cat-photo-card:hover .cat-photo-title{opacity:1}
+    .cat-loading{text-align:center;padding:40px;color:var(--muted);font-size:14px}
+
+    /* Save/like buttons on hover */
+    .cat-photo-actions{position:absolute;top:8px;right:8px;display:flex;gap:5px;opacity:0;transition:opacity .2s}
+    .cat-photo-card:hover .cat-photo-actions{opacity:1}
+    .cat-action-btn{width:32px;height:32px;border-radius:8px;background:rgba(255,255,255,.95);display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;border:none;transition:transform .15s}
+    .cat-action-btn:hover{transform:scale(1.1)}
+
+    /* TRENDING */
+    .trend-grid{display:flex;flex-wrap:wrap;gap:10px;padding-bottom:8px}
+    .trend-pill{display:flex;align-items:center;gap:8px;padding:10px 18px;border-radius:24px;border:1.5px solid var(--border);background:#fff;font-size:14px;font-weight:500;color:var(--text2);cursor:pointer;transition:all 0.15s}
+    .trend-pill:hover{border-color:var(--text);color:var(--text);background:var(--bg2)}
+    .trend-icon{font-size:18px}
+
+    /* POPULAR TAGS */
+    .tags-cloud{display:flex;flex-wrap:wrap;gap:8px}
+    .tag-btn{padding:7px 16px;border-radius:20px;font-size:13px;font-weight:500;border:1.5px solid var(--border);color:var(--text2);background:#fff;cursor:pointer;transition:all 0.15s}
+    .tag-btn:hover{border-color:var(--text);color:var(--text);background:var(--bg2)}
+
+    .footer{border-top:1px solid var(--border);padding:32px 24px;background:var(--bg2);margin-top:48px}
+    .footer-in{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
+    .f-logo{display:flex;align-items:center;gap:8px}
+    .f-logo-icon{width:26px;height:26px;background:var(--text);border-radius:7px;display:flex;align-items:center;justify-content:center}
+    .f-links{display:flex;gap:20px}
+    .f-links a{font-size:13px;color:var(--muted);transition:color 0.15s}
+    .f-links a:hover{color:var(--text)}
+
+    @keyframes fadeInUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+    .ani{animation:fadeInUp 0.5s ease both}
+
+    @media(max-width:900px){.featured-grid{grid-template-columns:1fr 1fr}.feat-card:last-child{display:none}.cat-masonry{columns:3 160px}}
+    @media(max-width:640px){
+      .featured-grid{grid-template-columns:1fr}.feat-card:not(:first-child){display:none}
+      .nav-search{max-width:160px}.btn-login{display:none}
+      .cat-masonry{columns:2 140px}
+    }
+    .cat-photo-card:hover .cat-dl-btn{opacity:1 !important;}
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="/" class="nav-logo">
+    <div class="logo-icon">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+        <circle cx="12" cy="13" r="4"/>
+      </svg>
+    </div>
+    <span>I<span style="color:#bbb;font-weight:300">-</span><span style="color:#777;font-weight:500">Clicks</span></span>
+  </a>
+  <a href="/explore" class="nav-explore">Explore</a>
+  <div class="nav-search">
+    <div class="search-box" onclick="document.getElementById('si').focus()">
+      <div class="search-icon-pos">
+        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" stroke-width="2.5"/><path d="m21 21-4.35-4.35" stroke-width="2.5" stroke-linecap="round"/></svg>
+      </div>
+      <input id="si" class="search-real" placeholder="Search photos..." autocomplete="off"
+        onkeydown="if(event.key==='Enter'&&this.value.trim())window.location.href='/ideas/'+encodeURIComponent(this.value.trim().toLowerCase().replace(/\s+/g,'-'))" />
+    </div>
+  </div>
+  <div class="nav-right">
+    <button class="btn-login">Log in</button>
+    <button class="btn-signup">Sign up</button>
+  </div>
+</nav>
+
+<div class="page">
+
+  <!-- FEATURED -->
+  <div class="sec-head ani" style="animation-delay:.1s">
+    <h2>Explore the best of I-Clicks</h2>
+    <a href="/" class="see-more">See all photos</a>
+  </div>
+  <div class="featured-grid ani" style="animation-delay:.15s" id="feat-grid"></div>
+
+  <!-- BROWSE BY CATEGORY -->
+  <div class="sec-head ani" style="animation-delay:.2s">
+    <h2>Browse by category</h2>
+    <a href="/" class="see-more">All photos</a>
+  </div>
+  <div class="cat-scroll ani" id="cat-scroll" style="animation-delay:.25s"></div>
+
+  <!-- CATEGORY GALLERY (shown when category card is clicked) -->
+  <div class="cat-gallery-section" id="cat-gallery-section">
+    <div class="cat-gallery-header">
+      <div>
+        <div class="cat-gallery-title" id="cat-gallery-title"></div>
+        <div class="cat-gallery-count" id="cat-gallery-count"></div>
+      </div>
+      <button class="btn-close-cat" onclick="closeCatGallery()">✕ Close</button>
+    </div>
+    <div class="cat-masonry" id="cat-masonry"></div>
+    <div id="cat-load-more-wrap" style="text-align:center;padding:24px;display:none">
+      <button onclick="loadMoreCatPhotos()" style="padding:10px 28px;border-radius:20px;border:1.5px solid var(--border2);font-size:14px;font-weight:600;cursor:pointer;font-family:var(--font);">Load more</button>
+    </div>
+  </div>
+
+  <!-- TRENDING SEARCHES -->
+  <div class="sec-head ani" style="animation-delay:.3s">
+    <h2>Trending searches</h2>
+  </div>
+  <div class="trend-grid ani" style="animation-delay:.35s">
+    <div class="trend-pill" onclick="go('nature')"><span class="trend-icon">🌿</span> Nature photography</div>
+    <div class="trend-pill" onclick="go('sunset')"><span class="trend-icon">🌅</span> Sunset golden hour</div>
+    <div class="trend-pill" onclick="go('portrait')"><span class="trend-icon">👤</span> Portrait shots</div>
+    <div class="trend-pill" onclick="go('street')"><span class="trend-icon">🏙️</span> Street photography</div>
+    <div class="trend-pill" onclick="go('macro')"><span class="trend-icon">🔬</span> Macro close-up</div>
+    <div class="trend-pill" onclick="go('travel')"><span class="trend-icon">✈️</span> Travel adventure</div>
+    <div class="trend-pill" onclick="go('architecture')"><span class="trend-icon">🏛️</span> Architecture minimal</div>
+    <div class="trend-pill" onclick="go('iphone-wallpaper')"><span class="trend-icon">📱</span> iPhone wallpaper</div>
+    <div class="trend-pill" onclick="go('golden-hour')"><span class="trend-icon">☀️</span> Golden hour</div>
+    <div class="trend-pill" onclick="go('night-photography')"><span class="trend-icon">🌙</span> Night photography</div>
+    <div class="trend-pill" onclick="go('india')"><span class="trend-icon">🇮🇳</span> India photography</div>
+    <div class="trend-pill" onclick="go('goa')"><span class="trend-icon">🏖️</span> Goa beach</div>
+    <div class="trend-pill" onclick="go('mountain')"><span class="trend-icon">🏔️</span> Mountain landscape</div>
+    <div class="trend-pill" onclick="go('flowers')"><span class="trend-icon">🌸</span> Flowers macro</div>
+    <div class="trend-pill" onclick="go('minimal')"><span class="trend-icon">◻️</span> Minimal aesthetic</div>
+    <div class="trend-pill" onclick="go('hd-wallpaper')"><span class="trend-icon">🖼️</span> HD wallpaper</div>
+  </div>
+
+  <!-- POPULAR TAGS -->
+  <div class="sec-head ani" style="animation-delay:.4s">
+    <h2>Popular tags</h2>
+  </div>
+  <div class="tags-cloud ani" style="animation-delay:.45s">
+    <button class="tag-btn" onclick="go('nature')">#nature</button>
+    <button class="tag-btn" onclick="go('sunset')">#sunset</button>
+    <button class="tag-btn" onclick="go('portrait')">#portrait</button>
+    <button class="tag-btn" onclick="go('street')">#street</button>
+    <button class="tag-btn" onclick="go('macro')">#macro</button>
+    <button class="tag-btn" onclick="go('travel')">#travel</button>
+    <button class="tag-btn" onclick="go('architecture')">#architecture</button>
+    <button class="tag-btn" onclick="go('iphone')">#iphone</button>
+    <button class="tag-btn" onclick="go('golden-hour')">#goldenhour</button>
+    <button class="tag-btn" onclick="go('india')">#india</button>
+    <button class="tag-btn" onclick="go('landscape')">#landscape</button>
+    <button class="tag-btn" onclick="go('minimal')">#minimal</button>
+    <button class="tag-btn" onclick="go('night')">#night</button>
+    <button class="tag-btn" onclick="go('bokeh')">#bokeh</button>
+    <button class="tag-btn" onclick="go('candid')">#candid</button>
+    <button class="tag-btn" onclick="go('flowers')">#flowers</button>
+    <button class="tag-btn" onclick="go('goa')">#goa</button>
+    <button class="tag-btn" onclick="go('ladakh')">#ladakh</button>
+    <button class="tag-btn" onclick="go('mumbai')">#mumbai</button>
+    <button class="tag-btn" onclick="go('wallpaper')">#wallpaper</button>
+    <button class="tag-btn" onclick="go('hd')">#hdphotos</button>
+    <button class="tag-btn" onclick="go('aesthetic')">#aesthetic</button>
+  </div>
+
+</div>
+
+<footer class="footer">
+  <div class="footer-in">
+    <div class="f-logo">
+      <div class="f-logo-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></div>
+      <span style="font-size:15px;font-weight:800">I-Clicks</span>
+    </div>
+    <div class="f-links">
+      <a href="/">Gallery</a><a href="/sitemap.xml">Sitemap</a><a href="#">Privacy</a><a href="/admin/login.html">Admin</a>
+    </div>
+    <span style="font-size:13px;color:var(--muted)">© 2024 I-Clicks. All rights reserved.</span>
+  </div>
+</footer>
+
+<script>
+function go(term){ window.location.href='/ideas/'+encodeURIComponent(term); }
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+const CAT_COLORS={'nature':'#2d6a4f','portrait':'#6d4c41','street':'#37474f','architecture':'#455a64','macro':'#6a1e4a','sunset':'#c45c1a','travel':'#1565c0','landscape':'#1b5e20','minimal':'#37474f','flowers':'#ad1457','night':'#1a237e','bokeh':'#4a148c'};
+const CAT_ICONS={'nature':'🌿','portrait':'👤','street':'🏙️','architecture':'🏛️','macro':'🔬','sunset':'🌅','travel':'✈️','landscape':'🏔️','minimal':'◻️','flowers':'🌸','night':'🌙','bokeh':'✨'};
+
+// Current category gallery state
+let currentCatId = null;
+let currentCatPage = 1;
+let currentCatHasMore = false;
+
+async function loadExploreData(){
+  try{
+    // Featured photos
+    const fd = await(await fetch('/api/photos?limit=3&featured=true')).json();
+    const allD = await(await fetch('/api/photos?limit=6')).json();
+    const featPhotos = (fd.success && fd.photos.length >= 3) ? fd.photos : (allD.photos || []);
+
+    const featGrid = document.getElementById('feat-grid');
+    const labels = ['Best iPhone shots of the week','Explore stunning iPhone photography','Top rated community photos'];
+    if(featPhotos.length > 0){
+      featGrid.innerHTML = featPhotos.slice(0,3).map((p,i)=>`
+        <div class="feat-card" onclick="openCatByPhoto('${p.category?._id||''}','${esc(p.category?.name||'Photography')}')" style="animation-delay:${.15+i*.08}s">
+          <img src="${p.thumbnailUrl||p.url}" alt="${esc(p.title)}" />
+          <div class="feat-card-overlay"></div>
+          <div class="feat-card-label">${labels[i]}</div>
+        </div>
+      `).join('');
+    }
+
+    // Categories — load each with a real photo
+    const cd = await(await fetch('/api/categories')).json();
+    const cats = cd.categories || [];
+    const scroll = document.getElementById('cat-scroll');
+
+    if(cats.length === 0){
+      scroll.innerHTML = '<div style="color:#999;font-size:14px;padding:20px">No categories yet. Add categories from the admin panel.</div>';
+      return;
+    }
+
+    // For each category, load its first photo to use as cover
+    const catHtml = await Promise.all(cats.map(async (c) => {
+      let coverUrl = '';
+      try {
+        const pd = await(await fetch(`/api/photos?category=${c._id}&limit=1`)).json();
+        if(pd.success && pd.photos.length > 0){
+          coverUrl = pd.photos[0].thumbnailUrl || pd.photos[0].url;
+        }
+      } catch(e){}
+
+      const color = CAT_COLORS[c.name.toLowerCase()] || '#555';
+      const icon  = CAT_ICONS[c.name.toLowerCase()] || '📷';
+
+      return `
+        <div class="cat-card" onclick="openCategoryGallery('${c._id}','${esc(c.name)}',${c.photoCount||0})">
+          <div class="cat-card-img" style="background:${color}">
+            ${coverUrl
+              ? `<img src="${coverUrl}" alt="${esc(c.name)}" />`
+              : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:40px">${icon}</div>`
+            }
+            <div class="cat-card-overlay"></div>
+            <div class="cat-card-name">${esc(c.name)}</div>
+          </div>
+          <div class="cat-card-count">${c.photoCount||0} photo${(c.photoCount||0)!==1?'s':''}</div>
+        </div>
+      `;
+    }));
+
+    scroll.innerHTML = catHtml.join('');
+  } catch(e){ console.error(e); }
+}
+
+// Open gallery for a category by ID — shows ALL photos in that category
+async function openCategoryGallery(catId, catName, totalCount){
+  if(!catId){
+    // No category ID — go to search page
+    go(catName.toLowerCase());
+    return;
+  }
+
+  currentCatId   = catId;
+  currentCatPage = 1;
+
+  document.getElementById('cat-gallery-title').textContent = catName + ' Photos';
+  document.getElementById('cat-gallery-count').textContent = 'Loading…';
+  document.getElementById('cat-masonry').innerHTML = '<div class="cat-loading">Loading photos…</div>';
+  document.getElementById('cat-gallery-section').classList.add('visible');
+
+  // Scroll to gallery
+  document.getElementById('cat-gallery-section').scrollIntoView({behavior:'smooth', block:'start'});
+
+  await fetchCatPhotos(catId, 1, true);
+}
+
+function openCatByPhoto(catId, catName){
+  if(catId) openCategoryGallery(catId, catName, 0);
+  else go(catName.toLowerCase());
+}
+
+async function fetchCatPhotos(catId, page, reset){
+  try{
+    const d = await(await fetch(`/api/photos?category=${catId}&page=${page}&limit=20`)).json();
+    if(!d.success) throw new Error();
+
+    const total = d.pagination.total;
+    document.getElementById('cat-gallery-count').textContent = `${total} photo${total!==1?'s':''} in this category`;
+
+    const masonry = document.getElementById('cat-masonry');
+    if(reset) masonry.innerHTML = '';
+
+    if(d.photos.length === 0 && reset){
+      card.innerHTML = `
+  <div style="padding-top:${ar}%;position:relative;overflow:hidden">
+    <img src="${p.thumbnailUrl||p.url}" alt="${esc(p.title)}"
+      style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover" loading="lazy"/>
+  </div>
+  <div class="cat-photo-overlay"></div>
+  <div class="cat-photo-title">${esc(p.title)}</div>
+ <div class="cat-photo-actions">
+    <button class="cat-action-btn" title="Save" onclick="event.stopPropagation()">🔖</button>
+    <button class="cat-action-btn" title="Like" onclick="event.stopPropagation()">❤️</button>
+    <button class="cat-action-btn" title="Download" onclick="event.stopPropagation();dlPhoto('${p.url}','${esc(p.title)}')">
+      <svg width="13" height="13" fill="none" stroke="#111" viewBox="0 0 24 24" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    </button>
+</div>
+  <button onclick="event.stopPropagation();dlPhoto('${p.url}','${esc(p.title)}')"
+    style="position:absolute;bottom:10px;left:10px;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.92);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;box-shadow:0 2px 8px rgba(0,0,0,.15);"
+    class="cat-dl-btn">
+    <svg width="14" height="14" fill="none" stroke="#111" viewBox="0 0 24 24" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+  </button>
+`;
+    }
+
+    d.photos.forEach(p => {
+      const ar = (p.height && p.width) ? (p.height/p.width*100).toFixed(1) : 100;
+      const card = document.createElement('div');
+      card.className = 'cat-photo-card';
+      card.innerHTML = `
+        <div style="padding-top:${ar}%;position:relative;overflow:hidden">
+          <img src="${p.thumbnailUrl||p.url}" alt="${esc(p.title)}"
+            style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover" loading="lazy"/>
+        </div>
+        <div class="cat-photo-overlay"></div>
+        <div class="cat-photo-title">${esc(p.title)}</div>
+        <div class="cat-photo-actions">
+          <button class="cat-action-btn" title="Save" onclick="event.stopPropagation()">🔖</button>
+          <button class="cat-action-btn" title="Like" onclick="event.stopPropagation()">❤️</button>
+        </div>
+      `;
+     card.addEventListener('click', (e) => {
+  if (e.target.closest('.cat-photo-actions')) return;
+  openPhotoLightbox(p);
+});
+      masonry.appendChild(card);
+    });
+
+    currentCatHasMore = d.pagination.hasMore;
+    document.getElementById('cat-load-more-wrap').style.display = currentCatHasMore ? 'block' : 'none';
+  } catch(e){
+    document.getElementById('cat-masonry').innerHTML = '<div class="cat-loading" style="color:#e74c4c">Failed to load photos.</div>';
+  }
+}
+
+async function loadMoreCatPhotos(){
+  currentCatPage++;
+  await fetchCatPhotos(currentCatId, currentCatPage, false);
+}
+
+function closeCatGallery(){
+  document.getElementById('cat-gallery-section').classList.remove('visible');
+  currentCatId = null;
+}
+
+document.addEventListener('DOMContentLoaded', loadExploreData);
+
+function openPhotoLightbox(p) {
+  const lb = document.createElement('div');
+  lb.style.cssText = 'position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.92);display:flex;align-items:center;justify-content:center;padding:20px;';
+  lb.innerHTML = `
+    <button onclick="this.parentElement.remove();document.body.style.overflow=''" style="position:absolute;top:20px;right:20px;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;font-size:18px;cursor:pointer;">✕</button>
+    <div style="display:flex;max-width:1100px;width:100%;max-height:90vh;border-radius:16px;overflow:hidden;background:#fff;">
+      <div style="flex:1;background:#111;display:flex;align-items:center;justify-content:center;">
+        <img src="${p.url}" style="max-width:100%;max-height:90vh;object-fit:contain;" alt="${p.title||''}" />
+      </div>
+      <div style="width:280px;flex-shrink:0;padding:24px;overflow-y:auto;display:flex;flex-direction:column;gap:12px;">
+        <h2 style="font-size:18px;font-weight:700;">${p.title||''}</h2>
+        <p style="font-size:14px;color:#777;">${p.description||''}</p>
+        ${p.location?`<div style="font-size:13px;color:#999;">📍 ${p.location}</div>`:''}
+        ${p.device?`<div style="font-size:13px;color:#999;">📱 ${p.device}</div>`:''}
+        <button onclick="dlPhoto('${p.url}','${p.title||'photo'}')" style="margin-top:auto;width:100%;padding:12px;background:#111;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;">⬇ Free Download</button>
+      </div>
+    </div>`;
+  lb.addEventListener('click', (e) => { if (e.target === lb) { lb.remove(); document.body.style.overflow=''; }});
+  document.body.appendChild(lb);
+  document.body.style.overflow = 'hidden';
+}
+
+function dlPhoto(url, title) {
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = title.replace(/\s+/g,'-').toLowerCase() + '.jpg';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>All Photos — I-Clicks Admin</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/admin/css/admin.css" />
+</head>
+<body>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">I<span>-</span>Clicks</div>
+    <nav class="sidebar-nav">
+      <a href="/admin/dashboard.html" class="nav-item"><span class="nav-icon">▦</span> Dashboard</a>
+      <a href="/admin/upload.html" class="nav-item"><span class="nav-icon">↑</span> Upload Photo</a>
+      <a href="/admin/photos.html" class="nav-item active"><span class="nav-icon">◫</span> All Photos</a>
+      <a href="/admin/categories.html" class="nav-item"><span class="nav-icon">≡</span> Categories</a>
+      <div class="nav-divider"></div>
+      <a href="/" class="nav-item" target="_blank"><span class="nav-icon">↗</span> View Site</a>
+      <button class="nav-item nav-logout" onclick="logout()"><span class="nav-icon">⎋</span> Logout</button>
+    </nav>
+  </aside>
+
+  <div class="main-wrap">
+    <header class="topbar">
+      <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+      <h1 class="page-title">All Photos</h1>
+      <div class="topbar-right">
+        <a href="/admin/upload.html" class="btn btn-primary" style="font-size:13px; padding:7px 14px;">↑ Upload</a>
+        <span class="admin-name" id="admin-name">Admin</span>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <div class="alert" id="photos-alert"></div>
+
+      <!-- Filters -->
+      <div style="display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap;">
+        <input type="text" id="search-photos" placeholder="Search photos…" style="max-width:220px;" oninput="debouncedSearch()" />
+        <select id="filter-status" onchange="loadPhotos(1)">
+          <option value="">All status</option>
+          <option value="published">Published</option>
+          <option value="draft">Draft</option>
+        </select>
+      </div>
+
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th style="width:60px;">Thumb</th>
+              <th>Title</th>
+              <th>Category</th>
+              <th>Status</th>
+              <th>Views</th>
+              <th>Date</th>
+              <th style="width:120px;">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="photos-tbody">
+            <tr><td colspan="7" style="text-align:center; padding:30px; color:#666;">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pagination" id="pagination"></div>
+    </main>
+  </div>
+
+  <!-- Edit Modal -->
+<div id="edit-modal" style="display:none; position:fixed; inset:0; z-index:500; background:rgba(0,0,0,0.85); align-items:center; justify-content:center; padding:20px; overflow-y:auto;">
+  <div style="background:#111; border:1px solid #242424; border-radius:12px; padding:28px; width:100%; max-width:560px; margin:auto; max-height:90vh; overflow-y:auto;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+      <h2 style="font-size:16px; font-weight:600;">Edit Photo</h2>
+      <button onclick="closeEditModal()" style="color:#777; font-size:20px; cursor:pointer; background:none; border:none;">✕</button>
+    </div>
+
+    <input type="hidden" id="edit-id" />
+
+    <!-- REPLACE IMAGE SECTION -->
+    <div style="margin-bottom:20px;">
+      <label style="font-size:12px;font-weight:600;color:#777;display:block;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px;">Replace Image</label>
+      <img id="current-thumb-img" src="" style="width:100%;height:140px;object-fit:cover;border-radius:8px;margin-bottom:10px;" />
+      <div onclick="document.getElementById('replace-file').click()"
+        style="border:2px dashed #333;border-radius:10px;padding:14px;text-align:center;cursor:pointer;background:#181818;">
+        <input type="file" id="replace-file" accept="image/*" style="display:none" onchange="handleReplaceFile(this)" />
+        <img id="new-preview" style="width:100%;height:120px;object-fit:cover;border-radius:8px;display:none;margin-bottom:8px;" />
+        <div id="replace-label" style="font-size:13px;color:#777;">📷 Click to <span style="color:#fff;font-weight:600;">replace image</span> · JPG PNG WEBP max 25MB</div>
+      </div>
+      <div id="replace-progress" style="display:none;margin-top:8px;">
+        <div style="height:3px;background:#1e1e1e;border-radius:2px;overflow:hidden;">
+          <div id="rp-fill" style="height:100%;background:#fff;width:0%;transition:width .3s;"></div>
+        </div>
+        <div id="rp-label" style="font-size:11px;color:#666;text-align:center;margin-top:4px;">Uploading…</div>
+      </div>
+      <button id="upload-new-btn" onclick="uploadNewImage()"
+        style="display:none;margin-top:10px;width:100%;padding:9px;background:#fff;color:#000;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);">
+        ↑ Upload New Image
+      </button>
+    </div>
+
+    <div class="form-grid">
+      <div class="form-group full">
+        <label>Title</label>
+        <input type="text" id="edit-title" />
+      </div>
+      <div class="form-group full">
+        <label>Description</label>
+        <textarea id="edit-description" rows="3"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Category</label>
+        <select id="edit-category"><option value="">— None —</option></select>
+      </div>
+      <div class="form-group">
+        <label>Tags</label>
+        <input type="text" id="edit-tags" />
+      </div>
+      <div class="form-group">
+        <label>Location</label>
+        <input type="text" id="edit-location" />
+      </div>
+      <div class="form-group" style="flex-direction:row;align-items:center;gap:16px;">
+        <div class="checkbox-row">
+          <input type="checkbox" id="edit-featured" />
+          <label for="edit-featured">Featured</label>
+        </div>
+        <div class="checkbox-row">
+          <input type="checkbox" id="edit-published" />
+          <label for="edit-published">Published</label>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex; gap:10px; margin-top:20px;">
+      <button class="btn btn-primary" onclick="saveEdit()">Save changes</button>
+      <button class="btn btn-secondary" onclick="closeEditModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+  <script src="/admin/js/admin.js"></script>
+  <script>
+    requireAuth();
+    let currentPage = 1;
+
+    async function loadPhotos(page = 1) {
+      currentPage = page;
+      const search = document.getElementById('search-photos').value.trim();
+      const status = document.getElementById('filter-status').value;
+
+      let url = `/api/photos/admin/all?page=${page}&limit=15`;
+      // Note: admin/all doesn't support filters in our current backend, but we filter client-side
+      
+      const tbody = document.getElementById('photos-tbody');
+      tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:30px; color:#666;">Loading…</td></tr>`;
+
+      try {
+        const data = await authFetch(url);
+        if (!data || !data.success) return;
+
+        let photos = data.photos;
+        if (search) photos = photos.filter(p => p.title.toLowerCase().includes(search.toLowerCase()));
+        if (status === 'published') photos = photos.filter(p => p.isPublished);
+        if (status === 'draft') photos = photos.filter(p => !p.isPublished);
+
+        if (photos.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:30px; color:#666;">No photos found</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = photos.map(p => `
+          <tr>
+            <td>
+              ${p.thumbnailUrl ? `<img src="${p.thumbnailUrl}" class="table-thumb" alt="" />` : '<div style="width:48px;height:48px;background:#1a1a1a;border-radius:6px;"></div>'}
+            </td>
+            <td>
+              <div class="table-title">${escHtml(p.title)}</div>
+              <div class="table-meta">${p.width ? p.width+'×'+p.height : ''} ${p.fileSize ? '· '+formatSize(p.fileSize) : ''}</div>
+            </td>
+            <td style="color:#777; font-size:13px;">${p.category ? escHtml(p.category.name) : '—'}</td>
+            <td><span class="recent-status ${p.isPublished ? 'status-published' : 'status-draft'}">${p.isPublished ? 'Published' : 'Draft'}</span></td>
+            <td style="color:#777; font-size:13px;">${(p.views||0).toLocaleString()}</td>
+            <td style="color:#777; font-size:13px;">${formatDate(p.createdAt)}</td>
+            <td>
+              <div style="display:flex; gap:6px;">
+                <button class="btn btn-secondary" style="padding:5px 10px; font-size:12px;" onclick="openEditModal(${JSON.stringify(p).replace(/"/g, '&quot;')})">Edit</button>
+                <button class="btn btn-danger" style="padding:5px 10px; font-size:12px;" onclick="deletePhoto('${p._id}', this)">Del</button>
+              </div>
+            </td>
+          </tr>
+        `).join('');
+
+        renderPagination(data.page, data.pages);
+      } catch (e) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:30px; color:#c66;">Error loading photos</td></tr>`;
+      }
+    }
+
+    function renderPagination(current, total) {
+      const el = document.getElementById('pagination');
+      if (total <= 1) { el.innerHTML = ''; return; }
+      let html = '';
+      if (current > 1) html += `<button class="page-btn" onclick="loadPhotos(${current-1})">‹</button>`;
+      for (let i = 1; i <= total; i++) {
+        html += `<button class="page-btn ${i === current ? 'active' : ''}" onclick="loadPhotos(${i})">${i}</button>`;
+      }
+      if (current < total) html += `<button class="page-btn" onclick="loadPhotos(${current+1})">›</button>`;
+      el.innerHTML = html;
+    }
+
+    let searchTimer;
+    function debouncedSearch() {
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(() => loadPhotos(1), 350);
+    }
+
+    let categories = [];
+    async function loadCategoriesForEdit() {
+      try {
+        const res = await fetch('/api/categories');
+        const data = await res.json();
+        categories = data.categories || [];
+      } catch (e) {}
+    }
+
+    function openEditModal(photo) {
+      document.getElementById('edit-id').value = photo._id;
+      document.getElementById('current-thumb-img').src = photo.thumbnailUrl || photo.url;
+document.getElementById('new-preview').style.display = 'none';
+document.getElementById('replace-label').style.display = 'block';
+document.getElementById('upload-new-btn').style.display = 'none';
+document.getElementById('replace-progress').style.display = 'none';
+document.getElementById('rp-fill').style.width = '0%';
+document.getElementById('replace-file').value = '';
+newImageFile = null;
+      document.getElementById('edit-title').value = photo.title || '';
+      document.getElementById('edit-description').value = photo.description || '';
+      document.getElementById('edit-tags').value = (photo.tags || []).join(', ');
+      document.getElementById('edit-location').value = photo.location || '';
+      document.getElementById('edit-featured').checked = photo.isFeatured;
+      document.getElementById('edit-published').checked = photo.isPublished;
+
+      const sel = document.getElementById('edit-category');
+      sel.innerHTML = '<option value="">— None —</option>';
+      categories.forEach(c => {
+        const selected = photo.category && (photo.category._id === c._id || photo.category === c._id) ? 'selected' : '';
+        sel.innerHTML += `<option value="${c._id}" ${selected}>${escHtml(c.name)}</option>`;
+      });
+
+      const modal = document.getElementById('edit-modal');
+      modal.style.display = 'flex';
+    }
+
+    function closeEditModal() {
+      document.getElementById('edit-modal').style.display = 'none';
+    }
+
+    async function saveEdit() {
+      const id = document.getElementById('edit-id').value;
+      const payload = {
+        title: document.getElementById('edit-title').value,
+        description: document.getElementById('edit-description').value,
+        category: document.getElementById('edit-category').value || undefined,
+        tags: document.getElementById('edit-tags').value,
+        location: document.getElementById('edit-location').value,
+        isFeatured: document.getElementById('edit-featured').checked,
+        isPublished: document.getElementById('edit-published').checked,
+      };
+
+      const data = await authFetch(`/api/photos/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (data && data.success) {
+        closeEditModal();
+        showAlert('photos-alert', 'Photo updated successfully.', 'success');
+        loadPhotos(currentPage);
+      } else {
+        showAlert('photos-alert', data?.message || 'Update failed.', 'error');
+      }
+    }
+
+    async function deletePhoto(id, btn) {
+      if (!confirm('Delete this photo? This cannot be undone.')) return;
+      btn.disabled = true;
+      const data = await authFetch(`/api/photos/${id}`, { method: 'DELETE' });
+      if (data && data.success) {
+        showAlert('photos-alert', 'Photo deleted.', 'success');
+        loadPhotos(currentPage);
+      } else {
+        showAlert('photos-alert', data?.message || 'Delete failed.', 'error');
+        btn.disabled = false;
+      }
+    }
+
+    loadCategoriesForEdit();
+    loadPhotos(1);
+    let newImageFile = null;
+
+function handleReplaceFile(input) {
+  const file = input.files[0];
+  if (!file) return;
+  newImageFile = file;
+  const reader = new FileReader();
+  reader.onload = e => {
+    document.getElementById('new-preview').src = e.target.result;
+    document.getElementById('new-preview').style.display = 'block';
+    document.getElementById('replace-label').textContent = '✓ ' + file.name + ' selected';
+    document.getElementById('upload-new-btn').style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+}
+
+async function uploadNewImage() {
+  if (!newImageFile) return;
+  const id = document.getElementById('edit-id').value;
+  const btn = document.getElementById('upload-new-btn');
+  btn.disabled = true; btn.textContent = 'Uploading…';
+  document.getElementById('replace-progress').style.display = 'block';
+  const formData = new FormData();
+  formData.append('photo', newImageFile);
+  const xhr = new XMLHttpRequest();
+  xhr.open('PUT', `/api/photos/${id}/replace-image`);
+  xhr.setRequestHeader('Authorization', `Bearer ${getToken()}`);
+  xhr.upload.onprogress = e => {
+    if (e.lengthComputable) {
+      const pct = Math.round(e.loaded / e.total * 100);
+      document.getElementById('rp-fill').style.width = pct + '%';
+      document.getElementById('rp-label').textContent = `Uploading… ${pct}%`;
+    }
+  };
+  xhr.onload = () => {
+    const data = JSON.parse(xhr.responseText);
+    document.getElementById('replace-progress').style.display = 'none';
+    if (data.success) {
+      document.getElementById('current-thumb-img').src = data.photo.thumbnailUrl + '?t=' + Date.now();
+      document.getElementById('new-preview').style.display = 'none';
+      document.getElementById('replace-label').textContent = '📷 Click to replace image · JPG PNG WEBP max 25MB';
+      btn.style.display = 'none'; btn.disabled = false; btn.textContent = '↑ Upload New Image';
+      newImageFile = null;
+      showAlert('photos-alert', '✓ Image replaced!', 'success');
+      loadPhotos(currentPage);
+    } else {
+      showAlert('photos-alert', data.message || 'Failed.', 'error');
+      btn.disabled = false; btn.textContent = '↑ Upload New Image';
+    }
+  };
+  xhr.send(formData);
+}
+  </script>
+</body>
+</html>

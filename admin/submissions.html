@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Submissions — I-Clicks Admin</title>
+  <meta name="robots" content="noindex"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/admin/css/admin.css"/>
+  <style>
+    .sub-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;display:flex;gap:0;margin-bottom:14px;transition:border-color .15s}
+    .sub-card:hover{border-color:var(--border2)}
+    .sub-img{width:120px;flex-shrink:0;position:relative;overflow:hidden;background:var(--surface2)}
+    .sub-img img{width:100%;height:100%;object-fit:cover;display:block}
+    .sub-body{flex:1;padding:16px;min-width:0}
+    .sub-title{font-size:15px;font-weight:600;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .sub-meta{font-size:12px;color:var(--muted);margin-bottom:10px;display:flex;flex-wrap:wrap;gap:10px}
+    .sub-meta span{display:flex;align-items:center;gap:4px}
+    .sub-desc{font-size:13px;color:var(--muted2);line-height:1.5;margin-bottom:12px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .sub-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px}
+    .sub-tag{padding:2px 8px;border-radius:6px;font-size:11px;background:var(--surface2);color:var(--muted);border:1px solid var(--border)}
+    .sub-actions{display:flex;gap:8px;align-items:center}
+    .btn-approve{padding:8px 18px;border-radius:8px;background:#1a3a1a;color:#6fcf6f;border:1px solid #2a5c2a;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);transition:all .15s}
+    .btn-approve:hover{background:#2a5c2a}
+    .btn-reject{padding:8px 18px;border-radius:8px;background:var(--danger-bg);color:var(--danger);border:1px solid #5c2a2a;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);transition:all .15s}
+    .btn-reject:hover{background:#4a1a1a}
+    .btn-preview{padding:8px 14px;border-radius:8px;background:var(--surface2);color:var(--text);border:1px solid var(--border);font-size:13px;cursor:pointer;font-family:var(--font);transition:all .15s}
+    .btn-preview:hover{border-color:var(--border2)}
+
+    .status-badge{display:inline-block;padding:3px 10px;border-radius:8px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px}
+    .s-pending{background:var(--warn-bg);color:var(--warn)}
+    .s-approved{background:var(--success-bg);color:var(--success)}
+    .s-rejected{background:var(--danger-bg);color:var(--danger)}
+
+    .filter-tabs{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap}
+    .ftab{padding:7px 16px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);color:var(--muted);background:transparent;font-family:var(--font);transition:all .15s}
+    .ftab:hover{color:var(--text);border-color:var(--border2)}
+    .ftab.on{background:var(--accent);color:#000;border-color:var(--accent)}
+    .ftab .cnt{opacity:.6;font-size:11px;margin-left:4px}
+
+    .empty-sub{text-align:center;padding:48px;color:var(--muted);font-size:14px}
+
+    /* Preview modal */
+    .preview-modal{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.9);display:none;align-items:center;justify-content:center;padding:20px}
+    .preview-modal.open{display:flex}
+    .preview-modal img{max-width:90vw;max-height:90vh;border-radius:12px;object-fit:contain}
+    .preview-close{position:absolute;top:20px;right:20px;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-family:var(--font)}
+
+    /* Reject note modal */
+    .reject-modal{position:fixed;inset:0;z-index:600;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;padding:20px}
+    .reject-modal.open{display:flex}
+    .reject-box{background:var(--surface);border:1px solid var(--border2);border-radius:16px;padding:28px;width:100%;max-width:420px}
+    .reject-box h3{font-size:16px;font-weight:600;margin-bottom:16px}
+    .reject-box textarea{width:100%;height:90px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px;color:var(--text);font-size:14px;font-family:var(--font);outline:none;resize:none;line-height:1.5}
+    .reject-box textarea:focus{border-color:var(--border2)}
+    .reject-box p{font-size:12px;color:var(--muted);margin:6px 0 16px}
+    .rj-btns{display:flex;gap:8px}
+  </style>
+</head>
+<body>
+
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">I<span>-</span>Clicks</div>
+  <nav class="sidebar-nav">
+    <a href="/admin/dashboard.html" class="nav-item"><span class="nav-icon">▦</span> Dashboard</a>
+    <a href="/admin/upload.html" class="nav-item"><span class="nav-icon">↑</span> Upload Photo</a>
+    <a href="/admin/photos.html" class="nav-item"><span class="nav-icon">◫</span> All Photos</a>
+    <a href="/admin/submissions.html" class="nav-item active"><span class="nav-icon">📬</span> Submissions <span id="pending-badge" style="background:#cf6f6f;color:#fff;border-radius:10px;padding:1px 7px;font-size:10px;margin-left:4px"></span></a>
+    <a href="/admin/categories.html" class="nav-item"><span class="nav-icon">≡</span> Categories</a>
+    <div class="nav-divider"></div>
+    <a href="/" class="nav-item" target="_blank"><span class="nav-icon">↗</span> View Site</a>
+    <button class="nav-item nav-logout" onclick="logout()"><span class="nav-icon">⎋</span> Logout</button>
+  </nav>
+</aside>
+
+<div class="main-wrap">
+  <header class="topbar">
+    <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+    <h1 class="page-title">User Submissions</h1>
+    <div class="topbar-right">
+      <span class="admin-name" id="admin-name">Admin</span>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <div class="alert" id="sub-alert"></div>
+
+    <!-- Filter tabs -->
+    <div class="filter-tabs">
+      <button class="ftab on" onclick="filterSubs('',this)">All <span class="cnt" id="cnt-all"></span></button>
+      <button class="ftab" onclick="filterSubs('pending',this)">⏳ Pending <span class="cnt" id="cnt-pending"></span></button>
+      <button class="ftab" onclick="filterSubs('approved',this)">✅ Approved <span class="cnt" id="cnt-approved"></span></button>
+      <button class="ftab" onclick="filterSubs('rejected',this)">❌ Rejected <span class="cnt" id="cnt-rejected"></span></button>
+    </div>
+
+    <div id="subs-list">
+      <div class="loading-row">Loading submissions…</div>
+    </div>
+  </main>
+</div>
+
+<!-- Preview modal -->
+<div class="preview-modal" id="preview-modal" onclick="if(event.target===this)closePreview()">
+  <button class="preview-close" onclick="closePreview()">✕</button>
+  <img id="preview-img" src="" alt=""/>
+</div>
+
+<!-- Reject note modal -->
+<div class="reject-modal" id="reject-modal">
+  <div class="reject-box">
+    <h3>Reject submission</h3>
+    <textarea id="reject-note" placeholder="Optional: reason for rejection (not shown to user)"></textarea>
+    <p>The photo files will be deleted after rejection.</p>
+    <div class="rj-btns">
+      <button class="btn btn-danger" id="confirm-reject-btn">Confirm Reject</button>
+      <button class="btn btn-secondary" onclick="closeRejectModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script src="/admin/js/admin.js"></script>
+<script>
+requireAuth();
+
+let currentFilter = '';
+let rejectTargetId = null;
+
+async function loadSubs(status = '') {
+  const list = document.getElementById('subs-list');
+  list.innerHTML = '<div class="loading-row">Loading…</div>';
+  try {
+    const url = `/api/submissions/admin${status ? '?status='+status : ''}`;
+    const data = await authFetch(url);
+    if (!data || !data.success) return;
+
+    // Update counts
+    const c = data.counts;
+    document.getElementById('cnt-all').textContent = c.pending + c.approved + c.rejected;
+    document.getElementById('cnt-pending').textContent = c.pending;
+    document.getElementById('cnt-approved').textContent = c.approved;
+    document.getElementById('cnt-rejected').textContent = c.rejected;
+    if (c.pending > 0) document.getElementById('pending-badge').textContent = c.pending;
+    else document.getElementById('pending-badge').textContent = '';
+
+    if (!data.submissions.length) {
+      list.innerHTML = '<div class="empty-sub">No submissions found.</div>';
+      return;
+    }
+
+    list.innerHTML = data.submissions.map(s => `
+      <div class="sub-card" id="card-${s._id}">
+        <div class="sub-img">
+          <img src="${s.thumbnailUrl || s.url}" alt="${escHtml(s.title)}" loading="lazy"/>
+        </div>
+        <div class="sub-body">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+            <div class="sub-title">${escHtml(s.title)}</div>
+            <span class="status-badge s-${s.status}">${s.status}</span>
+          </div>
+          <div class="sub-meta">
+            <span>👤 ${escHtml(s.name)}</span>
+            <span>✉️ ${escHtml(s.email)}</span>
+            ${s.location ? `<span>📍 ${escHtml(s.location)}</span>` : ''}
+            ${s.device ? `<span>📱 ${escHtml(s.device)}</span>` : ''}
+            <span>📅 ${formatDate(s.createdAt)}</span>
+            ${s.width ? `<span>🖼️ ${s.width}×${s.height}</span>` : ''}
+          </div>
+          ${s.description ? `<div class="sub-desc">${escHtml(s.description)}</div>` : ''}
+          ${s.tags?.length ? `<div class="sub-tags">${s.tags.map(t=>`<span class="sub-tag">#${escHtml(t)}</span>`).join('')}</div>` : ''}
+          <div class="sub-actions">
+            <button class="btn-preview" onclick="previewImg('${s.url}')">🔍 Preview</button>
+            ${s.status === 'pending' ? `
+              <button class="btn-approve" onclick="approveSub('${s._id}')">✅ Approve & Publish</button>
+              <button class="btn-reject" onclick="openRejectModal('${s._id}')">❌ Reject</button>
+            ` : ''}
+            ${s.status !== 'pending' ? `<button class="btn btn-secondary" style="padding:7px 14px;font-size:12px" onclick="deleteSub('${s._id}')">🗑 Delete</button>` : ''}
+            ${s.adminNote ? `<span style="font-size:12px;color:var(--muted);font-style:italic">Note: ${escHtml(s.adminNote)}</span>` : ''}
+          </div>
+        </div>
+      </div>
+    `).join('');
+  } catch(e) {
+    list.innerHTML = `<div class="empty-sub" style="color:#c66">Error loading submissions: ${e.message}</div>`;
+  }
+}
+
+function filterSubs(status, btn) {
+  currentFilter = status;
+  document.querySelectorAll('.ftab').forEach(t => t.classList.remove('on'));
+  btn.classList.add('on');
+  loadSubs(status);
+}
+
+async function approveSub(id) {
+  if (!confirm('Approve and publish this photo to the live gallery?')) return;
+  const card = document.getElementById('card-'+id);
+  card.style.opacity = '.5';
+  const data = await authFetch(`/api/submissions/${id}/approve`, { method: 'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({}) });
+  if (data && data.success) {
+    showAlert('sub-alert', '✅ Photo approved and published to gallery!', 'success');
+    loadSubs(currentFilter);
+  } else {
+    card.style.opacity = '1';
+    showAlert('sub-alert', data?.message || 'Approval failed.', 'error');
+  }
+}
+
+function openRejectModal(id) {
+  rejectTargetId = id;
+  document.getElementById('reject-note').value = '';
+  document.getElementById('reject-modal').classList.add('open');
+  document.getElementById('confirm-reject-btn').onclick = confirmReject;
+}
+
+function closeRejectModal() {
+  document.getElementById('reject-modal').classList.remove('open');
+  rejectTargetId = null;
+}
+
+async function confirmReject() {
+  if (!rejectTargetId) return;
+  const note = document.getElementById('reject-note').value.trim();
+  closeRejectModal();
+  const data = await authFetch(`/api/submissions/${rejectTargetId}/reject`, { method: 'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ note }) });
+  if (data && data.success) {
+    showAlert('sub-alert', 'Submission rejected.', 'success');
+    loadSubs(currentFilter);
+  } else {
+    showAlert('sub-alert', data?.message || 'Reject failed.', 'error');
+  }
+}
+
+async function deleteSub(id) {
+  if (!confirm('Permanently delete this submission?')) return;
+  const data = await authFetch(`/api/submissions/${id}`, { method: 'DELETE' });
+  if (data && data.success) {
+    showAlert('sub-alert', 'Deleted.', 'success');
+    loadSubs(currentFilter);
+  }
+}
+
+function previewImg(url) {
+  document.getElementById('preview-img').src = url;
+  document.getElementById('preview-modal').classList.add('open');
+}
+function closePreview() {
+  document.getElementById('preview-modal').classList.remove('open');
+}
+
+document.addEventListener('keydown', e => { if(e.key==='Escape'){closePreview();closeRejectModal();} });
+loadSubs();
+</script>
+</body>
+</html>
