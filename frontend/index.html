@@ -881,15 +881,14 @@ let photos = [];
 
 // Fixed 7 photo IDs — these always show on homepage
 const FIXED_IDS = [
-  '69e4cd6eca58b5f775ac2bca',
-  '69e4cd6dca58b5f775ac2bbd',
-  '69e4cd6dca58b5f775ac2bb1',
-  '69e4cd6dca58b5f775ac2ba6',
-  '69e4cd6cca58b5f775ac2b9c',
-  '69e4cd6cca58b5f775ac2b93',
-  '69e4cd6bca58b5f775ac2b8b'
+  '6a3420f66f19efebfb28b72b',
+  '6a3420c56f19efebfb28b728',
+  '6a34208f6f19efebfb28b725',
+  '6a34202b6f19efebfb28b6fa',
+  '6a341fc46f19efebfb28b6f7',
+  '6a341f536f19efebfb28b6f4',
+  '6a341ee06f19efebfb28b6f1'
 ];
-
 async function loadData() {
   try {
     const d = await (await fetch('/api/photos?limit=20')).json();
