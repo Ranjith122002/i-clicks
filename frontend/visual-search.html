@@ -117,8 +117,8 @@
     .rel-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
     .rel-card{border-radius:14px;overflow:hidden;cursor:pointer;transition:transform .2s;background:var(--bg2)}
     .rel-card:hover{transform:translateY(-4px)}
-    .rel-img{height:140px;overflow:hidden}
-    .rel-img img{width:100%;height:100%;object-fit:cover}
+    .rel-img{height:140px;overflow:hidden;position:relative}
+    .rel-img img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
     .rel-body{padding:14px}
     .rel-body span{font-size:11px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.5px}
     .rel-body h3{font-size:15px;font-weight:700;margin-top:5px;line-height:1.3}
@@ -248,21 +248,21 @@
     <h2>More from I-Clicks</h2>
     <div class="rel-grid">
       <div class="rel-card" onclick="window.location.href='/about.html'">
-        <div class="rel-img" style="background:linear-gradient(135deg,#2d6a4f,#40916c)"></div>
+        <div class="rel-img" id="rel-img-1" style="background:linear-gradient(135deg,#2d6a4f,#40916c)"></div>
         <div class="rel-body">
           <span>About</span>
           <h3>The world's best iPhone photography platform</h3>
         </div>
       </div>
       <div class="rel-card" onclick="window.location.href='/photographers.html'">
-        <div class="rel-img" style="background:linear-gradient(135deg,#c45c1a,#e07030)"></div>
+        <div class="rel-img" id="rel-img-2" style="background:linear-gradient(135deg,#c45c1a,#e07030)"></div>
         <div class="rel-body">
           <span>Photographers</span>
           <h3>Upload your iPhone photos to I-Clicks</h3>
         </div>
       </div>
       <div class="rel-card" onclick="window.location.href='/explore'">
-        <div class="rel-img" style="background:linear-gradient(135deg,#1565c0,#1976d2)"></div>
+        <div class="rel-img" id="rel-img-3" style="background:linear-gradient(135deg,#1565c0,#1976d2)"></div>
         <div class="rel-body">
           <span>Gallery</span>
           <h3>Explore thousands of free iPhone photos</h3>
@@ -291,6 +291,15 @@ async function loadPhotos() {
     const cells = document.querySelectorAll('#mini-gal .mg-cell');
     ps.slice(2,6).forEach((p,i)=>{
       if(cells[i]){cells[i].style.backgroundImage=`url('${p.thumbnailUrl||p.url}')`;cells[i].style.backgroundSize='cover';cells[i].style.backgroundPosition='center';}
+    });
+
+    // Related cards at bottom
+    const relIds = ['rel-img-1','rel-img-2','rel-img-3'];
+    relIds.forEach((id, i) => {
+      const p = ps[i + 4] || ps[i];
+      if (!p) return;
+      const el = document.getElementById(id);
+      if (el) { el.style.backgroundImage = `url('${p.thumbnailUrl||p.url}')`; el.style.backgroundSize='cover'; el.style.backgroundPosition='center'; }
     });
   } catch(e) {}
 }
