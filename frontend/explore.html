@@ -41,7 +41,6 @@
     .see-more{padding:8px 20px;border-radius:24px;font-size:14px;font-weight:600;border:2px solid var(--border2);color:var(--text);transition:all 0.15s}
     .see-more:hover{border-color:var(--text);background:var(--bg2)}
 
-    /* FEATURED */
     .featured-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:8px}
     .feat-card{position:relative;border-radius:var(--radius);overflow:hidden;height:320px;cursor:pointer;transition:transform 0.3s ease,box-shadow 0.3s ease}
     .feat-card:hover{transform:scale(1.02);box-shadow:0 12px 40px rgba(0,0,0,0.2)}
@@ -50,10 +49,9 @@
     .feat-card-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.7) 0%,rgba(0,0,0,0.1) 50%,transparent 70%)}
     .feat-card-label{position:absolute;bottom:0;left:0;right:0;padding:20px;color:#fff;font-size:18px;font-weight:800;line-height:1.3;text-align:center}
 
-    /* CATEGORY CARDS — now link by category ID */
-    .cat-scroll{display:flex;gap:12px;overflow-x:auto;scrollbar-width:none;padding-bottom:8px}
-    .cat-scroll::-webkit-scrollbar{display:none}
-    .cat-card{flex-shrink:0;width:180px;border-radius:var(--radius);overflow:hidden;cursor:pointer;position:relative;transition:transform 0.25s ease,box-shadow 0.25s ease;text-decoration:none}
+    /* CATEGORY GRID — 5 per row, wraps automatically */
+    .cat-scroll{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;padding-bottom:8px}
+    .cat-card{width:100%;border-radius:var(--radius);overflow:hidden;cursor:pointer;position:relative;transition:transform 0.25s ease,box-shadow 0.25s ease;text-decoration:none}
     .cat-card:hover{transform:translateY(-4px);box-shadow:0 8px 28px rgba(0,0,0,0.15)}
     .cat-card-img{height:200px;position:relative;overflow:hidden;background:#ddd}
     .cat-card-img img{transition:transform 0.4s ease;width:100%;height:100%;object-fit:cover}
@@ -62,7 +60,6 @@
     .cat-card-name{position:absolute;bottom:10px;left:0;right:0;text-align:center;color:#fff;font-size:14px;font-weight:700}
     .cat-card-count{padding:8px;font-size:12px;color:var(--muted);text-align:center;background:#fff}
 
-    /* CATEGORY GALLERY — shows all photos in selected category */
     .cat-gallery-section{display:none;margin-top:8px}
     .cat-gallery-section.visible{display:block}
     .cat-gallery-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding:12px 0}
@@ -71,7 +68,6 @@
     .btn-close-cat{padding:7px 16px;border-radius:20px;font-size:13px;font-weight:600;border:1.5px solid var(--border2);color:var(--text2);background:#fff;cursor:pointer;transition:all .15s}
     .btn-close-cat:hover{border-color:var(--text);color:var(--text)}
 
-    /* Masonry gallery */
     .cat-masonry{columns:4 200px;column-gap:10px}
     .cat-photo-card{break-inside:avoid;margin-bottom:10px;border-radius:12px;overflow:hidden;cursor:pointer;position:relative;transition:transform .25s,box-shadow .25s}
     .cat-photo-card:hover{transform:scale(1.02);box-shadow:0 8px 24px rgba(0,0,0,0.15)}
@@ -82,19 +78,16 @@
     .cat-photo-card:hover .cat-photo-title{opacity:1}
     .cat-loading{text-align:center;padding:40px;color:var(--muted);font-size:14px}
 
-    /* Save/like buttons on hover */
     .cat-photo-actions{position:absolute;top:8px;right:8px;display:flex;gap:5px;opacity:0;transition:opacity .2s}
     .cat-photo-card:hover .cat-photo-actions{opacity:1}
     .cat-action-btn{width:32px;height:32px;border-radius:8px;background:rgba(255,255,255,.95);display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;border:none;transition:transform .15s}
     .cat-action-btn:hover{transform:scale(1.1)}
 
-    /* TRENDING */
     .trend-grid{display:flex;flex-wrap:wrap;gap:10px;padding-bottom:8px}
     .trend-pill{display:flex;align-items:center;gap:8px;padding:10px 18px;border-radius:24px;border:1.5px solid var(--border);background:#fff;font-size:14px;font-weight:500;color:var(--text2);cursor:pointer;transition:all 0.15s}
     .trend-pill:hover{border-color:var(--text);color:var(--text);background:var(--bg2)}
     .trend-icon{font-size:18px}
 
-    /* POPULAR TAGS */
     .tags-cloud{display:flex;flex-wrap:wrap;gap:8px}
     .tag-btn{padding:7px 16px;border-radius:20px;font-size:13px;font-weight:500;border:1.5px solid var(--border);color:var(--text2);background:#fff;cursor:pointer;transition:all 0.15s}
     .tag-btn:hover{border-color:var(--text);color:var(--text);background:var(--bg2)}
@@ -110,17 +103,16 @@
     @keyframes fadeInUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
     .ani{animation:fadeInUp 0.5s ease both}
 
-    @media(max-width:900px){.featured-grid{grid-template-columns:1fr 1fr}.feat-card:last-child{display:none}.cat-masonry{columns:3 160px}}
+    @media(max-width:1100px){.cat-scroll{grid-template-columns:repeat(4,1fr)}}
+    @media(max-width:900px){.featured-grid{grid-template-columns:1fr 1fr}.feat-card:last-child{display:none}.cat-masonry{columns:3 160px}.cat-scroll{grid-template-columns:repeat(3,1fr)}}
     @media(max-width:640px){
       .featured-grid{grid-template-columns:1fr}.feat-card:not(:first-child){display:none}
       .nav-search{max-width:160px}.btn-login{display:none}
-      .cat-masonry{columns:2 140px}
+      .cat-masonry{columns:2 140px}.cat-scroll{grid-template-columns:repeat(2,1fr)}
     }
-    .cat-photo-card:hover .cat-dl-btn{opacity:1 !important;}
   </style>
 </head>
 <body>
-
 <nav class="nav">
   <a href="/" class="nav-logo">
     <div class="logo-icon">
@@ -141,10 +133,10 @@
         onkeydown="if(event.key==='Enter'&&this.value.trim())window.location.href='/ideas/'+encodeURIComponent(this.value.trim().toLowerCase().replace(/\s+/g,'-'))" />
     </div>
   </div>
- <div class="nav-right">
+  <div class="nav-right">
     <button class="btn-login" onclick="window.location.href='/'">Log in</button>
     <button class="btn-signup" onclick="window.location.href='/'">Sign up</button>
-</div>
+  </div>
 </nav>
 
 <div class="page">
@@ -163,7 +155,7 @@
   </div>
   <div class="cat-scroll ani" id="cat-scroll" style="animation-delay:.25s"></div>
 
-  <!-- CATEGORY GALLERY (shown when category card is clicked) -->
+  <!-- CATEGORY GALLERY -->
   <div class="cat-gallery-section" id="cat-gallery-section">
     <div class="cat-gallery-header">
       <div>
@@ -177,7 +169,8 @@
       <button onclick="loadMoreCatPhotos()" style="padding:10px 28px;border-radius:20px;border:1.5px solid var(--border2);font-size:14px;font-weight:600;cursor:pointer;font-family:var(--font);">Load more</button>
     </div>
   </div>
-<!-- SHOP IPHONE GEAR -->
+
+  <!-- SHOP IPHONE GEAR -->
   <div class="sec-head ani" style="animation-delay:.5s">
     <h2>Shop iPhone Photography Gear</h2>
   </div>
@@ -185,7 +178,7 @@
     <a href="https://www.amazon.in/dp/B0DBVLS3N6?tag=iclicksphotog-21" target="_blank" rel="noopener"
       style="display:flex;flex-direction:column;background:#fff;border:1.5px solid #e0e0e0;border-radius:16px;text-decoration:none;color:#111;overflow:hidden;">
       <div style="height:200px;background:#f9f9f9;display:flex;align-items:center;justify-content:center;padding:16px;flex-shrink:0">
-        <img src="https://m.media-amazon.com/images/I/71TAKYvwDnL._AC_UY327_FMwebp_QL65_.jpg" alt="iPhone Lens Kit" style="max-height:180px;max-width:100%;object-fit:contain"/>
+        <img src="https://m.media-amazon.com/images/I/71TAKYvwDnL._AC_UY327_FMwebp_QL65_.jpg" alt="iPhone Lens Kit" style="max-height:180px;max-width:100%;object-fit:contain;width:auto;height:auto"/>
       </div>
       <div style="padding:16px;border-top:1px solid #f0f0f0;flex:1;display:flex;flex-direction:column;justify-content:space-between">
         <div>
@@ -201,7 +194,7 @@
     <a href="https://www.amazon.in/dp/B09DCK93L4?tag=iclicksphotog-21" target="_blank" rel="noopener"
       style="display:flex;flex-direction:column;background:#fff;border:1.5px solid #e0e0e0;border-radius:16px;text-decoration:none;color:#111;overflow:hidden;">
       <div style="height:200px;background:#f9f9f9;display:flex;align-items:center;justify-content:center;padding:16px;flex-shrink:0">
-        <img src="https://m.media-amazon.com/images/I/516lfKpFVNL._AC_UY327_FMwebp_QL65_.jpg" alt="iPhone Tripod" style="max-height:180px;max-width:100%;object-fit:contain"/>
+        <img src="https://m.media-amazon.com/images/I/516lfKpFVNL._AC_UY327_FMwebp_QL65_.jpg" alt="iPhone Tripod" style="max-height:180px;max-width:100%;object-fit:contain;width:auto;height:auto"/>
       </div>
       <div style="padding:16px;border-top:1px solid #f0f0f0;flex:1;display:flex;flex-direction:column;justify-content:space-between">
         <div>
@@ -217,7 +210,7 @@
     <a href="https://www.amazon.in/dp/B0CCJF3ZX4?tag=iclicksphotog-21" target="_blank" rel="noopener"
       style="display:flex;flex-direction:column;background:#fff;border:1.5px solid #e0e0e0;border-radius:16px;text-decoration:none;color:#111;overflow:hidden;">
       <div style="height:200px;background:#f9f9f9;display:flex;align-items:center;justify-content:center;padding:16px;flex-shrink:0">
-        <img src="https://m.media-amazon.com/images/I/61swPzu66SL._AC_UL480_FMwebp_QL65_.jpg" alt="iPhone Case" style="max-height:180px;max-width:100%;object-fit:contain"/>
+        <img src="https://m.media-amazon.com/images/I/61swPzu66SL._AC_UL480_FMwebp_QL65_.jpg" alt="iPhone Case" style="max-height:180px;max-width:100%;object-fit:contain;width:auto;height:auto"/>
       </div>
       <div style="padding:16px;border-top:1px solid #f0f0f0;flex:1;display:flex;flex-direction:column;justify-content:space-between">
         <div>
@@ -231,6 +224,7 @@
       </div>
     </a>
   </div>
+
   <!-- TRENDING SEARCHES -->
   <div class="sec-head ani" style="animation-delay:.3s">
     <h2>Trending searches</h2>
@@ -305,179 +299,107 @@ function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace
 const CAT_COLORS={'nature':'#2d6a4f','portrait':'#6d4c41','street':'#37474f','architecture':'#455a64','macro':'#6a1e4a','sunset':'#c45c1a','travel':'#1565c0','landscape':'#1b5e20','minimal':'#37474f','flowers':'#ad1457','night':'#1a237e','bokeh':'#4a148c'};
 const CAT_ICONS={'nature':'🌿','portrait':'👤','street':'🏙️','architecture':'🏛️','macro':'🔬','sunset':'🌅','travel':'✈️','landscape':'🏔️','minimal':'◻️','flowers':'🌸','night':'🌙','bokeh':'✨'};
 
-// Current category gallery state
-let currentCatId = null;
-let currentCatPage = 1;
-let currentCatHasMore = false;
+let currentCatId=null,currentCatPage=1,currentCatHasMore=false;
 
 async function loadExploreData(){
   try{
-    // Featured photos
-    const fd = await(await fetch('/api/photos?limit=3&featured=true')).json();
-    const allD = await(await fetch('/api/photos?limit=6')).json();
-    const featPhotos = (fd.success && fd.photos.length >= 3) ? fd.photos : (allD.photos || []);
-
-    const featGrid = document.getElementById('feat-grid');
-    const labels = ['Best iPhone shots of the week','Explore stunning iPhone photography','Top rated community photos'];
-    if(featPhotos.length > 0){
-      featGrid.innerHTML = featPhotos.slice(0,3).map((p,i)=>`
+    const fd=await(await fetch('/api/photos?limit=3&featured=true')).json();
+    const allD=await(await fetch('/api/photos?limit=6')).json();
+    const featPhotos=(fd.success&&fd.photos.length>=3)?fd.photos:(allD.photos||[]);
+    const featGrid=document.getElementById('feat-grid');
+    const labels=['Best iPhone shots of the week','Explore stunning iPhone photography','Top rated community photos'];
+    if(featPhotos.length>0){
+      featGrid.innerHTML=featPhotos.slice(0,3).map((p,i)=>`
         <div class="feat-card" onclick="openCatByPhoto('${p.category?._id||''}','${esc(p.category?.name||'Photography')}')" style="animation-delay:${.15+i*.08}s">
           <img src="${p.thumbnailUrl||p.url}" alt="${esc(p.title)}" />
           <div class="feat-card-overlay"></div>
           <div class="feat-card-label">${labels[i]}</div>
-        </div>
-      `).join('');
+        </div>`).join('');
     }
-
-    // Categories — load each with a real photo
-    const cd = await(await fetch('/api/categories')).json();
-    const cats = cd.categories || [];
-    const scroll = document.getElementById('cat-scroll');
-
-    if(cats.length === 0){
-      scroll.innerHTML = '<div style="color:#999;font-size:14px;padding:20px">No categories yet. Add categories from the admin panel.</div>';
-      return;
-    }
-
-    // For each category, load its first photo to use as cover
-    const catHtml = await Promise.all(cats.map(async (c) => {
-      let coverUrl = '';
-      try {
-        const pd = await(await fetch(`/api/photos?category=${c._id}&limit=1`)).json();
-        if(pd.success && pd.photos.length > 0){
-          coverUrl = pd.photos[0].thumbnailUrl || pd.photos[0].url;
-        }
-      } catch(e){}
-
-      const color = CAT_COLORS[c.name.toLowerCase()] || '#555';
-      const icon  = CAT_ICONS[c.name.toLowerCase()] || '📷';
-
-      return `
-        <div class="cat-card" onclick="openCategoryGallery('${c._id}','${esc(c.name)}',${c.photoCount||0})">
-          <div class="cat-card-img" style="background:${color}">
-            ${coverUrl
-              ? `<img src="${coverUrl}" alt="${esc(c.name)}" />`
-              : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:40px">${icon}</div>`
-            }
-            <div class="cat-card-overlay"></div>
-            <div class="cat-card-name">${esc(c.name)}</div>
-          </div>
-          <div class="cat-card-count">${c.photoCount||0} photo${(c.photoCount||0)!==1?'s':''}</div>
+    const cd=await(await fetch('/api/categories')).json();
+    const cats=cd.categories||[];
+    const scroll=document.getElementById('cat-scroll');
+    if(cats.length===0){scroll.innerHTML='<div style="color:#999;font-size:14px;padding:20px">No categories yet.</div>';return;}
+    const catHtml=await Promise.all(cats.map(async(c)=>{
+      let coverUrl='';
+      try{
+        const pd=await(await fetch(`/api/photos?category=${c._id}&limit=1`)).json();
+        if(pd.success&&pd.photos.length>0)coverUrl=pd.photos[0].thumbnailUrl||pd.photos[0].url;
+      }catch(e){}
+      const color=CAT_COLORS[c.name.toLowerCase()]||'#555';
+      const icon=CAT_ICONS[c.name.toLowerCase()]||'📷';
+      return`<div class="cat-card" onclick="openCategoryGallery('${c._id}','${esc(c.name)}',${c.photoCount||0})">
+        <div class="cat-card-img" style="background:${color}">
+          ${coverUrl?`<img src="${coverUrl}" alt="${esc(c.name)}" />`:`<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:40px">${icon}</div>`}
+          <div class="cat-card-overlay"></div>
+          <div class="cat-card-name">${esc(c.name)}</div>
         </div>
-      `;
+        <div class="cat-card-count">${c.photoCount||0} photo${(c.photoCount||0)!==1?'s':''}</div>
+      </div>`;
     }));
-
-    scroll.innerHTML = catHtml.join('');
-  } catch(e){ console.error(e); }
+    scroll.innerHTML=catHtml.join('');
+  }catch(e){console.error(e);}
 }
 
-// Open gallery for a category by ID — shows ALL photos in that category
-async function openCategoryGallery(catId, catName, totalCount){
-  if(!catId){
-    // No category ID — go to search page
-    go(catName.toLowerCase());
-    return;
-  }
-
-  currentCatId   = catId;
-  currentCatPage = 1;
-
-  document.getElementById('cat-gallery-title').textContent = catName + ' Photos';
-  document.getElementById('cat-gallery-count').textContent = 'Loading…';
-  document.getElementById('cat-masonry').innerHTML = '<div class="cat-loading">Loading photos…</div>';
+async function openCategoryGallery(catId,catName,totalCount){
+  if(!catId){go(catName.toLowerCase());return;}
+  currentCatId=catId;currentCatPage=1;
+  document.getElementById('cat-gallery-title').textContent=catName+' Photos';
+  document.getElementById('cat-gallery-count').textContent='Loading…';
+  document.getElementById('cat-masonry').innerHTML='<div class="cat-loading">Loading photos…</div>';
   document.getElementById('cat-gallery-section').classList.add('visible');
-
-  // Scroll to gallery
-  document.getElementById('cat-gallery-section').scrollIntoView({behavior:'smooth', block:'start'});
-
-  await fetchCatPhotos(catId, 1, true);
+  document.getElementById('cat-gallery-section').scrollIntoView({behavior:'smooth',block:'start'});
+  await fetchCatPhotos(catId,1,true);
 }
 
-function openCatByPhoto(catId, catName){
-  if(catId) openCategoryGallery(catId, catName, 0);
+function openCatByPhoto(catId,catName){
+  if(catId)openCategoryGallery(catId,catName,0);
   else go(catName.toLowerCase());
 }
 
-async function fetchCatPhotos(catId, page, reset){
+async function fetchCatPhotos(catId,page,reset){
   try{
-    const d = await(await fetch(`/api/photos?category=${catId}&page=${page}&limit=20`)).json();
-    if(!d.success) throw new Error();
-
-    const total = d.pagination.total;
-    document.getElementById('cat-gallery-count').textContent = `${total} photo${total!==1?'s':''} in this category`;
-
-    const masonry = document.getElementById('cat-masonry');
-    if(reset) masonry.innerHTML = '';
-
-    if(d.photos.length === 0 && reset){
-      card.innerHTML = `
-  <div style="padding-top:${ar}%;position:relative;overflow:hidden">
-    <img src="${p.thumbnailUrl||p.url}" alt="${esc(p.title)}"
-      style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover" loading="lazy"/>
-  </div>
-  <div class="cat-photo-overlay"></div>
-  <div class="cat-photo-title">${esc(p.title)}</div>
- <div class="cat-photo-actions">
-    <button class="cat-action-btn" title="Save" onclick="event.stopPropagation()">🔖</button>
-    <button class="cat-action-btn" title="Like" onclick="event.stopPropagation()">❤️</button>
-    <button class="cat-action-btn" title="Download" onclick="event.stopPropagation();dlPhoto('${p.url}','${esc(p.title)}')">
-      <svg width="13" height="13" fill="none" stroke="#111" viewBox="0 0 24 24" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-    </button>
-</div>
-  <button onclick="event.stopPropagation();dlPhoto('${p.url}','${esc(p.title)}')"
-    style="position:absolute;bottom:10px;left:10px;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.92);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;box-shadow:0 2px 8px rgba(0,0,0,.15);"
-    class="cat-dl-btn">
-    <svg width="14" height="14" fill="none" stroke="#111" viewBox="0 0 24 24" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-  </button>
-`;
-    }
-
-    d.photos.forEach(p => {
-      const ar = (p.height && p.width) ? (p.height/p.width*100).toFixed(1) : 100;
-      const card = document.createElement('div');
-      card.className = 'cat-photo-card';
-      card.innerHTML = `
+    const d=await(await fetch(`/api/photos?category=${catId}&page=${page}&limit=20`)).json();
+    if(!d.success)throw new Error();
+    const total=d.pagination.total;
+    document.getElementById('cat-gallery-count').textContent=`${total} photo${total!==1?'s':''} in this category`;
+    const masonry=document.getElementById('cat-masonry');
+    if(reset)masonry.innerHTML='';
+    if(d.photos.length===0&&reset){masonry.innerHTML='<div class="cat-loading">No photos in this category yet.</div>';return;}
+    d.photos.forEach(p=>{
+      const ar=(p.height&&p.width)?(p.height/p.width*100).toFixed(1):100;
+      const card=document.createElement('div');
+      card.className='cat-photo-card';
+      card.innerHTML=`
         <div style="padding-top:${ar}%;position:relative;overflow:hidden">
-          <img src="${p.thumbnailUrl||p.url}" alt="${esc(p.title)}"
-            style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover" loading="lazy"/>
+          <img src="${p.thumbnailUrl||p.url}" alt="${esc(p.title)}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover" loading="lazy"/>
         </div>
         <div class="cat-photo-overlay"></div>
         <div class="cat-photo-title">${esc(p.title)}</div>
         <div class="cat-photo-actions">
           <button class="cat-action-btn" title="Save" onclick="event.stopPropagation()">🔖</button>
           <button class="cat-action-btn" title="Like" onclick="event.stopPropagation()">❤️</button>
-        </div>
-      `;
-     card.addEventListener('click', (e) => {
-  if (e.target.closest('.cat-photo-actions')) return;
-  openPhotoLightbox(p);
-});
+        </div>`;
+      card.addEventListener('click',(e)=>{if(e.target.closest('.cat-photo-actions'))return;openPhotoLightbox(p);});
       masonry.appendChild(card);
     });
-
-    currentCatHasMore = d.pagination.hasMore;
-    document.getElementById('cat-load-more-wrap').style.display = currentCatHasMore ? 'block' : 'none';
-  } catch(e){
-    document.getElementById('cat-masonry').innerHTML = '<div class="cat-loading" style="color:#e74c4c">Failed to load photos.</div>';
+    currentCatHasMore=d.pagination.hasMore;
+    document.getElementById('cat-load-more-wrap').style.display=currentCatHasMore?'block':'none';
+  }catch(e){
+    document.getElementById('cat-masonry').innerHTML='<div class="cat-loading" style="color:#e74c4c">Failed to load photos.</div>';
   }
 }
 
-async function loadMoreCatPhotos(){
-  currentCatPage++;
-  await fetchCatPhotos(currentCatId, currentCatPage, false);
-}
+async function loadMoreCatPhotos(){currentCatPage++;await fetchCatPhotos(currentCatId,currentCatPage,false);}
 
-function closeCatGallery(){
-  document.getElementById('cat-gallery-section').classList.remove('visible');
-  currentCatId = null;
-}
+function closeCatGallery(){document.getElementById('cat-gallery-section').classList.remove('visible');currentCatId=null;}
 
-document.addEventListener('DOMContentLoaded', loadExploreData);
+document.addEventListener('DOMContentLoaded',loadExploreData);
 
-function openPhotoLightbox(p) {
-  const lb = document.createElement('div');
-  lb.style.cssText = 'position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.92);display:flex;align-items:center;justify-content:center;padding:20px;';
-  lb.innerHTML = `
+function openPhotoLightbox(p){
+  const lb=document.createElement('div');
+  lb.style.cssText='position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.92);display:flex;align-items:center;justify-content:center;padding:20px;';
+  lb.innerHTML=`
     <button onclick="this.parentElement.remove();document.body.style.overflow=''" style="position:absolute;top:20px;right:20px;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;font-size:18px;cursor:pointer;">✕</button>
     <div style="display:flex;max-width:1100px;width:100%;max-height:90vh;border-radius:16px;overflow:hidden;background:#fff;">
       <div style="flex:1;background:#111;display:flex;align-items:center;justify-content:center;">
@@ -491,15 +413,15 @@ function openPhotoLightbox(p) {
         <button onclick="dlPhoto('${p.url}','${p.title||'photo'}')" style="margin-top:auto;width:100%;padding:12px;background:#111;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;">⬇ Free Download</button>
       </div>
     </div>`;
-  lb.addEventListener('click', (e) => { if (e.target === lb) { lb.remove(); document.body.style.overflow=''; }});
+  lb.addEventListener('click',(e)=>{if(e.target===lb){lb.remove();document.body.style.overflow='';}});
   document.body.appendChild(lb);
-  document.body.style.overflow = 'hidden';
+  document.body.style.overflow='hidden';
 }
 
-function dlPhoto(url, title) {
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = title.replace(/\s+/g,'-').toLowerCase() + '.jpg';
+function dlPhoto(url,title){
+  const a=document.createElement('a');
+  a.href=url;
+  a.download=title.replace(/\s+/g,'-').toLowerCase()+'.jpg';
   document.body.appendChild(a);
   a.click();
   a.remove();
